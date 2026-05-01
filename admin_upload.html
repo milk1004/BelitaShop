@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- ✨ 補上這三行，讓它變成全螢幕的 Web App -->
+    <!-- 讓網頁變成全螢幕 Web App -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="上架神器">
@@ -18,7 +18,7 @@
         input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; background: #fafafa;}
         .btn-submit { width: 100%; padding: 16px; background: #8b7355; color: #fff; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .btn-submit:disabled { background: #ccc;}
-        .status { text-align: center; font-size: 13px; color: #888; margin-top: 10px; display: none; }
+        .status { text-align: center; font-size: 14px; font-weight: bold; color: #8b7355; margin-top: 15px; display: none; }
     </style>
 </head>
 <body>
@@ -35,27 +35,44 @@
             <div id="status-msg" class="status">圖片與資料處理中...</div>
         </form>
     </div>
+    
     <script>
-        const adminCode = prompt("請輸入老闆專用密碼：");
-        if (adminCode !== "1234") { // ⚠️ 記得改掉這個預設密碼
+        // ✨ 優化 1：使用 sessionStorage 記住密碼
+        // 這樣就算切換 App 導致網頁被手機重整，也不用重輸密碼 (關閉分頁才會失效)
+        let adminCode = sessionStorage.getItem('belita_admin_code');
+        
+        if (!adminCode) {
+            adminCode = prompt("請輸入老闆專用密碼：");
+            if (adminCode === "1234") { // ⚠️ 記得改成你自己的密碼
+                sessionStorage.setItem('belita_admin_code', adminCode);
+            }
+        }
+
+        if (adminCode !== "1234") { 
             document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px; color: red;'>⛔ 權限不足</h1>";
         } else {
             document.getElementById('admin-panel').style.display = 'block';
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
+            
+            const scriptURL = 'YOUR_GAS_URL_HERE'; // ⚠️ 請貼上您的 GAS 網址
             const IMGBB_API_KEY = '4bd3a0f7ef60563653ce5f04d1d67588'; 
 
             document.getElementById('upload-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const btn = document.getElementById('submit-btn');
                 const msg = document.getElementById('status-msg');
-                btn.disabled = true; msg.style.display = 'block';
+                btn.disabled = true; 
+                msg.innerText = '圖片與資料處理中...';
+                msg.style.display = 'block';
+                msg.style.color = '#8b7355';
 
                 try {
+                    // 1. 上傳圖片
                     const formData = new FormData();
                     formData.append('image', document.getElementById('imageFile').files[0]);
                     const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
                     const imgData = await imgRes.json();
 
+                    // 2. 寫入 Google Sheet
                     await fetch(scriptURL, { 
                         method: 'POST', 
                         body: JSON.stringify({
@@ -66,8 +83,20 @@
                             imgUrl: imgData.data.url
                         }) 
                     });
-                    alert('✅ 上架成功！'); location.reload();
-                } catch (error) { alert('出錯了'); btn.disabled = false; msg.style.display = 'none';}
+
+                    // ✨ 優化 2：上傳成功後「不重整網頁」，直接清空表單
+                    alert('✅ 上架成功！'); 
+                    document.getElementById('upload-form').reset(); // 清空所有輸入框
+                    
+                    // 恢復按鈕，準備下一次上傳
+                    btn.disabled = false; 
+                    msg.style.display = 'none';
+
+                } catch (error) { 
+                    alert('❌ 出錯了，請檢查網路連線'); 
+                    btn.disabled = false; 
+                    msg.style.display = 'none';
+                }
             });
         }
     </script>
