@@ -31,7 +31,7 @@
         .banner h1 { font-size: 32px; margin: 0 0 15px 0; }
         .banner p { color: var(--text-light); margin: 0; }
         
-        /* ✨ 新增：賣場公告區塊樣式 */
+        /* 賣場公告區塊樣式 */
         .notice-box { background: #fdfaf7; border: 1px dashed #d1c4b7; padding: 18px 25px; border-radius: 12px; margin: 25px auto 0; text-align: left; display: inline-block; color: #555; font-size: 15px; line-height: 1.8; max-width: 100%; }
         .notice-box strong { color: var(--primary-color); }
         
@@ -49,14 +49,38 @@
         .product-title { font-size: 16px; margin: 0 0 8px 0; font-weight: normal; }
         .product-price { color: var(--primary-color); font-weight: bold; margin: 0; }
         
-        /* 手機版排版 */
+        /* ✨ 手機版排版優化 (解決按鈕擠壓變形問題) */
         @media (max-width: 768px) {
-            header { padding: 15px 10px; }
-            .logo-img { width: 60px; height: 60px; }
-            .btn-outline { padding: 6px 12px; font-size: 13px;}
-            .banner h1 { font-size: 24px; }
-            .notice-box { font-size: 14px; padding: 15px; width: 100%; }
-            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            /* 1. 讓 Logo 和按鈕分成上下兩排 */
+            header { 
+                flex-direction: column; 
+                gap: 12px; 
+                padding: 12px 15px; 
+            }
+            .logo-img { width: 55px; height: 55px; }
+            
+            /* 2. 按鈕置中，並設定「強制不換行」與防止壓縮 */
+            .header-actions { 
+                width: 100%; 
+                justify-content: center; 
+                flex-wrap: wrap; 
+                gap: 8px; /* 稍微縮小按鈕間距 */
+            }
+            .btn-outline { 
+                padding: 6px 14px; 
+                font-size: 13px; 
+                white-space: nowrap; /* 確保文字不會換行造成形狀奇怪 */
+                flex-shrink: 0; 
+            }
+            
+            /* 3. 縮小橫幅與卡片內距，增加畫面呼吸空間 */
+            .banner-container { padding: 25px 15px; }
+            .banner { padding: 30px 20px; }
+            .banner h1 { font-size: 22px; }
+            .notice-box { font-size: 13.5px; padding: 15px; width: 100%; }
+            
+            /* 商品列表微調 */
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 15px 60px 15px; }
         }
     </style>
 </head>
@@ -70,7 +94,7 @@
             </div>
         </div>
         
-        <!-- ✨ 修復：右上角動態按鈕區塊 -->
+        <!-- 動態按鈕區塊 -->
         <div class="header-actions">
             <button class="btn-outline" id="user-status-btn">登入 / 註冊</button>
             <button class="btn-outline" id="my-orders-btn" onclick="location.href='my_orders.html'" style="display: none;">📦 訂單</button>
@@ -84,7 +108,7 @@
             <h1>日本/韓國連線代購</h1>
             <p>點擊商品即可加入購物車。目前上架 : <span id="total-count">-</span> 件</p>
             
-            <!-- ✨ 新增：賣場公告與連線資訊 -->
+            <!-- 賣場公告與連線資訊 -->
             <div class="notice-box">
                 <div>✈️ <strong>近期連線：</strong>5/21 - 5/24 沖繩連線採購</div>
                 <div>⏳ <strong>結單時間：</strong>出發前一日 23:59 準時收單</div>
@@ -106,10 +130,10 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
+        const scriptURL = 'YOUR_GAS_URL_HERE'; // ⚠️ 請貼上您的 GAS 網址 (網頁應用程式 URL)
         let allProducts = [];
 
-        // ✨ 修復：處理登入/登出狀態顯示
+        // 處理登入/登出狀態顯示
         function updateAuthStatus() {
             const currentUser = localStorage.getItem('belita_user');
             const btn = document.getElementById('user-status-btn');
