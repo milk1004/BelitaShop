@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Belita | 商品詳情</title>
+    <style>
+        :root { --primary: #8b7355; --bg: #faf8f5; }
+        * { box-sizing: border-box; font-family: sans-serif; }
+        body { margin: 0; background: var(--bg); padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .back-btn { display: inline-block; margin-bottom: 20px; color: #888; text-decoration: none; font-weight: bold; }
+        img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; margin-bottom: 20px; }
+        h1 { font-size: 20px; margin: 0 0 10px 0; }
+        .price { color: var(--primary); font-size: 22px; font-weight: bold; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+        select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; outline: none;}
+        .qty-control { display: flex; align-items: center; gap: 15px; }
+        .qty-btn { width: 40px; height: 40px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 20px; cursor: pointer; }
+        input[type="number"] { width: 60px; text-align: center; border: none; font-size: 18px; font-weight: bold; }
+        .btn-add { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← 返回首頁</a>
+        <img id="img" src="">
+        <h1 id="name">載入中...</h1>
+        <div class="price" id="price">NT$ 0</div>
+
+        <div class="form-group" id="spec-group" style="display: none;">
+            <label>選擇規格</label>
+            <select id="spec"></select>
+        </div>
+
+        <div class="form-group">
+            <label>購買數量</label>
+            <div class="qty-control">
+                <button class="qty-btn" onclick="changeQty(-1)">-</button>
+                <input type="number" id="qty" value="1" readonly>
+                <button class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+        </div>
+
+        <button class="btn-add" onclick="addToCart()">加入購物車</button>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const pName = params.get('name');
+        const pPrice = parseInt(params.get('price'));
+        const pImg = params.get('img');
+        const specsStr = params.get('specs');
+
+        document.getElementById('name').innerText = pName;
+        document.getElementById('price').innerText = `NT$ ${pPrice}`;
+        document.getElementById('img').src = pImg;
+
+        if (specsStr) {
+            document.getElementById('spec-group').style.display = 'block';
+            specsStr.split(/,|，/).forEach(s => {
+                if(s.trim()) document.getElementById('spec').add(new Option(s.trim(), s.trim()));
+            });
+        }
+
+        function changeQty(n) {
+            let input = document.getElementById('qty');
+            let val = parseInt(input.value) + n;
+            if(val >= 1 && val <= 20) input.value = val;
+        }
+
+        function addToCart() {
+            let cart = JSON.parse(localStorage.getItem('belita_cart') || '[]');
+            let spec = specsStr ? document.getElementById('spec').value : '';
+            let qty = parseInt(document.getElementById('qty').value);
+            
+            // 加入購物車陣列
+            cart.push({ name: pName, price: pPrice, img: pImg, spec: spec, qty: qty });
+            localStorage.setItem('belita_cart', JSON.stringify(cart));
+            
+            alert('🛒 已加入購物車！');
+            window.location.href = 'index.html'; // 加完跳回首頁繼續逛
+        }
+    </script>
+</body>
+</html>
