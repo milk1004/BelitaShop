@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- 讓網頁變成全螢幕 Web App -->
+    <!-- 讓網頁變成全螢幕 Web App (iPhone 專用) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="上架神器">
@@ -11,25 +11,56 @@
     <style>
         * { box-sizing: border-box; font-family: sans-serif; }
         body { background: #f4f6f8; padding: 15px; margin: 0; }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
         h1 { font-size: 20px; color: #8b7355; text-align: center; margin-bottom: 20px;}
         .form-group { margin-bottom: 18px; }
         label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #555;}
-        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; background: #fafafa;}
-        .btn-submit { width: 100%; padding: 16px; background: #8b7355; color: #fff; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; background: #fafafa; outline: none;}
+        input:focus, select:focus { border-color: #8b7355; background: #fff;}
+        .btn-submit { width: 100%; padding: 16px; background: #8b7355; color: #fff; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s;}
         .btn-submit:disabled { background: #ccc;}
         .status { text-align: center; font-size: 14px; font-weight: bold; color: #8b7355; margin-top: 15px; display: none; }
+        
+        /* ✨ 新增：專屬密碼輸入框樣式 (置中、間距加大) */
+        .pwd-input { text-align: center; letter-spacing: 8px; font-size: 22px; font-weight: bold; padding: 15px;}
     </style>
 </head>
 <body>
+    
+    <!-- ✨ 新增：老闆專屬登入畫面 -->
+    <div class="container" id="login-panel" style="display: none; margin-top: 40px;">
+        <h1>🔒 老闆身分驗證</h1>
+        <div class="form-group">
+            <!-- inputmode="numeric" 搭配 pattern 就能完美喚起 iPhone 數字鍵盤 -->
+            <input type="password" id="admin-pwd-input" class="pwd-input" placeholder="輸入數字密碼" inputmode="numeric" pattern="[0-9]*">
+        </div>
+        <button class="btn-submit" onclick="verifyAdmin()">進入上架系統</button>
+    </div>
+
+    <!-- 原本的：上架系統畫面 -->
     <div class="container" id="admin-panel" style="display: none;">
         <h1>📸 現場連線快速上架</h1>
         <form id="upload-form">
-            <div class="form-group"><label>1. 拍攝照片</label><input type="file" id="imageFile" accept="image/*" required></div>
-            <div class="form-group"><label>2. 商品名稱</label><input type="text" id="productName" required></div>
-            <div class="form-group"><label>3. 價格 (NTD)</label><input type="number" id="price" inputmode="numeric" required></div>
-            <div class="form-group"><label>4. 分類</label>
-                <select id="category"><option>伴手禮</option><option>零食</option><option>保養品</option><option>生活雜貨</option></select>
+            <div class="form-group">
+                <label>1. 拍攝照片</label>
+                <input type="file" id="imageFile" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label>2. 商品名稱</label>
+                <input type="text" id="productName" required>
+            </div>
+            <div class="form-group">
+                <label>3. 價格 (NTD)</label>
+                <input type="number" id="price" inputmode="numeric" required>
+            </div>
+            <div class="form-group">
+                <label>4. 分類</label>
+                <select id="category">
+                    <option>伴手禮</option>
+                    <option>零食</option>
+                    <option>保養品</option>
+                    <option>生活雜貨</option>
+                </select>
             </div>
             <button type="submit" class="btn-submit" id="submit-btn">上傳並上架</button>
             <div id="status-msg" class="status">圖片與資料處理中...</div>
@@ -37,68 +68,85 @@
     </div>
     
     <script>
-        // ✨ 優化 1：使用 sessionStorage 記住密碼
-        // 這樣就算切換 App 導致網頁被手機重整，也不用重輸密碼 (關閉分頁才會失效)
+        const scriptURL = 'YOUR_GAS_URL_HERE'; // ⚠️ 請務必貼上您的 GAS 網址
+        const IMGBB_API_KEY = '4bd3a0f7ef60563653ce5f04d1d67588'; 
+
+        // 讀取暫存密碼
         let adminCode = sessionStorage.getItem('belita_admin_code');
+        const loginPanel = document.getElementById('login-panel');
+        const adminPanel = document.getElementById('admin-panel');
         
+        // 畫面初始化邏輯
         if (!adminCode) {
-            adminCode = prompt("請輸入老闆專用密碼：");
-            if (adminCode === "1234") { // ⚠️ 記得改成你自己的密碼
+            loginPanel.style.display = 'block'; // 沒登入就顯示登入畫面
+        } else {
+            adminPanel.style.display = 'block'; // 有暫存密碼直接進系統
+        }
+
+        // ✨ 新增：登入按鈕的驗證邏輯
+        function verifyAdmin() {
+            const pwdValue = document.getElementById('admin-pwd-input').value;
+            if (pwdValue) {
+                adminCode = pwdValue;
                 sessionStorage.setItem('belita_admin_code', adminCode);
+                loginPanel.style.display = 'none';
+                adminPanel.style.display = 'block';
+            } else {
+                alert('請輸入密碼！');
             }
         }
 
-        if (adminCode !== "1234") { 
-            document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px; color: red;'>⛔ 權限不足</h1>";
-        } else {
-            document.getElementById('admin-panel').style.display = 'block';
+        // 上架表單送出邏輯
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const msg = document.getElementById('status-msg');
             
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
-            const IMGBB_API_KEY = '4bd3a0f7ef60563653ce5f04d1d67588'; 
+            btn.disabled = true; 
+            msg.style.display = 'block';
 
-            document.getElementById('upload-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const btn = document.getElementById('submit-btn');
-                const msg = document.getElementById('status-msg');
-                btn.disabled = true; 
-                msg.innerText = '圖片與資料處理中...';
-                msg.style.display = 'block';
-                msg.style.color = '#8b7355';
+            try {
+                const formData = new FormData();
+                formData.append('image', document.getElementById('imageFile').files[0]);
+                const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+                const imgData = await imgRes.json();
 
-                try {
-                    // 1. 上傳圖片
-                    const formData = new FormData();
-                    formData.append('image', document.getElementById('imageFile').files[0]);
-                    const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
-                    const imgData = await imgRes.json();
+                const response = await fetch(scriptURL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({
+                        action: 'add_product',
+                        adminPassword: adminCode, // 傳送密碼給 GAS 後台比對
+                        productName: document.getElementById('productName').value,
+                        category: document.getElementById('category').value,
+                        price: document.getElementById('price').value,
+                        imgUrl: imgData.data.url
+                    }) 
+                });
+                
+                const result = await response.json();
 
-                    // 2. 寫入 Google Sheet
-                    await fetch(scriptURL, { 
-                        method: 'POST', 
-                        body: JSON.stringify({
-                            action: 'add_product',
-                            productName: document.getElementById('productName').value,
-                            category: document.getElementById('category').value,
-                            price: document.getElementById('price').value,
-                            imgUrl: imgData.data.url
-                        }) 
-                    });
-
-                    // ✨ 優化 2：上傳成功後「不重整網頁」，直接清空表單
+                if (result.result === 'success') {
                     alert('✅ 上架成功！'); 
-                    document.getElementById('upload-form').reset(); // 清空所有輸入框
-                    
-                    // 恢復按鈕，準備下一次上傳
-                    btn.disabled = false; 
-                    msg.style.display = 'none';
-
-                } catch (error) { 
-                    alert('❌ 出錯了，請檢查網路連線'); 
-                    btn.disabled = false; 
-                    msg.style.display = 'none';
+                    document.getElementById('upload-form').reset(); 
+                } else {
+                    alert('❌ 上架失敗：' + (result.message || '未知錯誤'));
+                    // 如果密碼錯誤，踢回登入畫面重新輸入
+                    if (result.message === '密碼錯誤！') {
+                        sessionStorage.removeItem('belita_admin_code');
+                        adminCode = null;
+                        document.getElementById('admin-pwd-input').value = '';
+                        adminPanel.style.display = 'none';
+                        loginPanel.style.display = 'block';
+                    }
                 }
-            });
-        }
+
+            } catch (error) { 
+                alert('❌ 出錯了，請檢查網路連線'); 
+            } finally {
+                btn.disabled = false; 
+                msg.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
