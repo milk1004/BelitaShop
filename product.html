@@ -111,7 +111,7 @@
 // ✨ 更新：自動生成帶有圖片預覽的分享連結
         function shareToLine() {
             // ⚠️ 這裡填上你的 Google Apps Script 網址
-            const gasUrl = 'YOUR_GAS_URL_HERE'; 
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
             
             // 組裝分享給 Google 中轉站的網址
             const shareUrl = `${gasUrl}?type=share&name=${encodeURIComponent(pName)}&price=${pPrice}&img=${encodeURIComponent(pImg)}&specs=${encodeURIComponent(specsStr)}`;
