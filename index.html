@@ -49,37 +49,16 @@
         .product-title { font-size: 16px; margin: 0 0 8px 0; font-weight: normal; }
         .product-price { color: var(--primary-color); font-weight: bold; margin: 0; }
         
-        /* ✨ 手機版排版優化 (解決按鈕擠壓變形問題) */
+        /* 手機版排版優化 */
         @media (max-width: 768px) {
-            /* 1. 讓 Logo 和按鈕分成上下兩排 */
-            header { 
-                flex-direction: column; 
-                gap: 12px; 
-                padding: 12px 15px; 
-            }
+            header { flex-direction: column; gap: 12px; padding: 12px 15px; }
             .logo-img { width: 55px; height: 55px; }
-            
-            /* 2. 按鈕置中，並設定「強制不換行」與防止壓縮 */
-            .header-actions { 
-                width: 100%; 
-                justify-content: center; 
-                flex-wrap: wrap; 
-                gap: 8px; /* 稍微縮小按鈕間距 */
-            }
-            .btn-outline { 
-                padding: 6px 14px; 
-                font-size: 13px; 
-                white-space: nowrap; /* 確保文字不會換行造成形狀奇怪 */
-                flex-shrink: 0; 
-            }
-            
-            /* 3. 縮小橫幅與卡片內距，增加畫面呼吸空間 */
+            .header-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 8px; }
+            .btn-outline { padding: 6px 14px; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
             .banner-container { padding: 25px 15px; }
             .banner { padding: 30px 20px; }
             .banner h1 { font-size: 22px; }
             .notice-box { font-size: 13.5px; padding: 15px; width: 100%; }
-            
-            /* 商品列表微調 */
             .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 15px 60px 15px; }
         }
     </style>
@@ -94,7 +73,6 @@
             </div>
         </div>
         
-        <!-- 動態按鈕區塊 -->
         <div class="header-actions">
             <button class="btn-outline" id="user-status-btn">登入 / 註冊</button>
             <button class="btn-outline" id="my-orders-btn" onclick="location.href='my_orders.html'" style="display: none;">📦 訂單</button>
@@ -108,7 +86,6 @@
             <h1>日本/韓國連線代購</h1>
             <p>點擊商品即可加入購物車。目前上架 : <span id="total-count">-</span> 件</p>
             
-            <!-- 賣場公告與連線資訊 -->
             <div class="notice-box">
                 <div>✈️ <strong>近期連線：</strong>5/21 - 5/24 沖繩連線採購</div>
                 <div>⏳ <strong>結單時間：</strong>出發前一日 23:59 準時收單</div>
@@ -126,14 +103,13 @@
     </div>
 
     <div class="products-grid" id="products-container">
-        <div style="text-align: center; grid-column: 1/-1; padding: 40px; color: #888;">商品資料讀取中，請稍候...</div>
+        <!-- 這裡不需要寫讀取中了，因為快取會瞬間蓋過去 -->
     </div>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
         let allProducts = [];
 
-        // 處理登入/登出狀態顯示
         function updateAuthStatus() {
             const currentUser = localStorage.getItem('belita_user');
             const btn = document.getElementById('user-status-btn');
@@ -141,7 +117,7 @@
             
             if (currentUser) {
                 btn.innerText = '登出 (' + currentUser + ')';
-                orderBtn.style.display = 'inline-block'; // 顯示訂單按鈕
+                orderBtn.style.display = 'inline-block';
                 btn.onclick = function() {
                     if (confirm('確定要登出帳號嗎？')) {
                         localStorage.removeItem('belita_user');
@@ -151,28 +127,50 @@
                 };
             } else {
                 btn.innerText = '登入 / 註冊';
-                orderBtn.style.display = 'none'; // 隱藏訂單按鈕
+                orderBtn.style.display = 'none';
                 btn.onclick = function() { location.href = 'login.html'; };
             }
         }
 
-        // 更新右上角購物車數字
         function updateCartCount() {
             const cart = JSON.parse(localStorage.getItem('belita_cart') || '[]');
             document.getElementById('cart-count').innerText = cart.length;
         }
 
-        // 讀取商品資料
+        // ✨ 升級重點：載入商品資料 (快取技術)
         async function loadProducts() {
-            try {
-                const res = await fetch(scriptURL);
-                allProducts = await res.json();
+            const container = document.getElementById('products-container');
+            
+            // 1. 先從手機記憶體找暫存資料
+            const cachedData = sessionStorage.getItem('belita_products_cache');
+            
+            // 如果有暫存，瞬間顯示畫面！(不用等 Google 回應)
+            if (cachedData) {
+                allProducts = JSON.parse(cachedData);
                 renderProducts(allProducts);
                 document.getElementById('total-count').innerText = allProducts.length;
-            } catch (e) { document.getElementById('products-container').innerHTML = '<div style="text-align: center; grid-column: 1/-1; color: red;">❌ 商品讀取失敗</div>'; }
+            } else {
+                // 只有第一次進網站，沒暫存時才顯示讀取中
+                container.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 40px; color: #888;">商品資料讀取中，請稍候...</div>';
+            }
+
+            // 2. 背景偷偷向 Google 抓最新資料
+            try {
+                const res = await fetch(scriptURL);
+                const freshProducts = await res.json();
+                
+                // 比對資料，如果老闆有偷偷上架新東西，才重新渲染畫面並更新快取
+                if (JSON.stringify(freshProducts) !== cachedData) {
+                    allProducts = freshProducts;
+                    sessionStorage.setItem('belita_products_cache', JSON.stringify(allProducts)); // 存入記憶體
+                    renderProducts(allProducts);
+                    document.getElementById('total-count').innerText = allProducts.length;
+                }
+            } catch (e) { 
+                if (!cachedData) container.innerHTML = '<div style="text-align: center; grid-column: 1/-1; color: red;">❌ 商品讀取失敗，請檢查網路</div>'; 
+            }
         }
 
-        // 渲染商品卡片
         function renderProducts(products) {
             const container = document.getElementById('products-container');
             container.innerHTML = products.length === 0 ? '<div style="text-align: center; grid-column: 1/-1; padding: 40px; color: #888;">目前此分類暫無商品。</div>' : '';
@@ -190,7 +188,6 @@
             });
         }
 
-        // 分類過濾按鈕邏輯
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelector('.filter-btn.active').classList.remove('active');
@@ -200,7 +197,6 @@
             });
         });
 
-        // 頁面載入時執行
         window.onload = () => { 
             updateAuthStatus(); 
             updateCartCount();
