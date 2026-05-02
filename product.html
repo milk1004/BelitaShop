@@ -108,18 +108,17 @@
             window.location.href = 'index.html'; 
         }
 
-        // ✨ 新增：分享到 LINE 的邏輯
+// ✨ 更新：自動生成帶有圖片預覽的分享連結
         function shareToLine() {
-            // 1. 取得目前這個商品頁的完整網址
-            const currentUrl = window.location.href;
+            // ⚠️ 這裡填上你的 Google Apps Script 網址
+            const gasUrl = 'YOUR_GAS_URL_HERE'; 
             
-            // 2. 組合要傳給朋友的推坑文字
-            const message = `✨ 快來看看這個代購好物：\n【${pName}】只要 NT$ ${pPrice}！\n\n👇 點擊下方連結直接看商品 👇\n${currentUrl}`;
+            // 組裝分享給 Google 中轉站的網址
+            const shareUrl = `${gasUrl}?type=share&name=${encodeURIComponent(pName)}&price=${pPrice}&img=${encodeURIComponent(pImg)}&specs=${encodeURIComponent(specsStr)}`;
             
-            // 3. 將文字編碼後，透過 LINE 的官方分享連結打開
+            const message = `✨ 快來看看這個代購好物：\n【${pName}】只要 NT$ ${pPrice}！\n\n👇 點擊下方連結直接看商品 👇\n${shareUrl}`;
+            
             const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
-            
-            // 4. 跳轉到 LINE (手機上會自動打開 LINE App，電腦會打開 LINE 網頁版/應用程式)
             window.open(lineUrl, '_blank');
         }
     </script>
