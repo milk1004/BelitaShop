@@ -110,8 +110,8 @@
 
 // ✨ 更新：自動生成帶有圖片預覽的分享連結 (iPhone 友善版)
         function shareToLine() {
-            // ⚠️ 請確認你的網址前後「一定」要有單引號 ' 或雙引號 " 包住它！
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
+            // ⚠️ 這裡的名字改回 gasUrl，要跟下面呼叫的名字一樣！
+            const gasUrl = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
             
             // 組裝分享給 Google 中轉站的網址
             const shareUrl = `${gasUrl}?type=share&name=${encodeURIComponent(pName)}&price=${pPrice}&img=${encodeURIComponent(pImg)}&specs=${encodeURIComponent(specsStr)}`;
