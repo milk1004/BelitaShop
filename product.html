@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- ✨ 新增：專門給 LINE / FB 抓取預覽圖用的品牌 OG 標籤 -->
+    <meta property="og:title" content="Belita SELECT | 日本韓國連線代購">
+    <meta property="og:description" content="點擊查看代購好物與專屬優惠！最新連線商品熱賣中。">
+    <meta property="og:image" content="https://i.ibb.co/jvQ3yVBp/S-35160091.jpg">
+    <meta property="og:type" content="website">
+
     <title>Belita | 商品詳情</title>
     <style>
         :root { --primary: #8b7355; --bg: #faf8f5; }
@@ -28,7 +35,7 @@
         .btn-share-line { 
             width: 100%; 
             padding: 16px; 
-            background: #06C755; /* LINE 的官方品牌綠色 */
+            background: #06C755; 
             color: #fff; 
             border: none; 
             border-radius: 10px; 
@@ -110,17 +117,14 @@
 
 // ✨ 更新：自動生成帶有圖片預覽的分享連結 (iPhone 友善版)
         function shareToLine() {
-            // ⚠️ 這裡的名字改回 gasUrl，要跟下面呼叫的名字一樣！
-            const gasUrl = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
+            // 抓取目前這個 GitHub 商品頁的真實網址
+            const currentUrl = window.location.href;
             
-            // 組裝分享給 Google 中轉站的網址
-            const shareUrl = `${gasUrl}?type=share&name=${encodeURIComponent(pName)}&price=${pPrice}&img=${encodeURIComponent(pImg)}&specs=${encodeURIComponent(specsStr)}`;
+            // 組合推坑文案
+            const message = `✨ 快來看看這個代購好物：\n【${pName}】只要 NT$ ${pPrice}！\n\n👇 點擊下方連結直接看商品 👇\n${currentUrl}`;
             
-            const message = `✨ 快來看看這個代購好物：\n【${pName}】只要 NT$ ${pPrice}！\n\n👇 點擊下方連結直接看商品 👇\n${shareUrl}`;
-            
+            // 跳轉到 LINE
             const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
-            
-            // ✨ 改用這行，避免 iPhone 把跳轉當成廣告擋掉
             window.location.href = lineUrl;
         }
     </script>
