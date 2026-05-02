@@ -5,18 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Belita | 下單完成</title>
     <style>
-        body { background: #faf8f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; text-align: center; font-family: 'PingFang TC', sans-serif;}
-        .card { background: white; padding: 50px 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 400px;}
-        h1 { color: #8b7355; margin-bottom: 15px; font-size: 24px;}
-        p { color: #666; line-height: 1.6; font-size: 15px;}
-        .btn { display: inline-block; padding: 14px 35px; background: #8b7355; color: white; text-decoration: none; border-radius: 25px; font-weight: bold; margin-top: 25px;}
+        :root { --primary: #8b7355; --bg: #fdfaf7; }
+        body { background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; text-align: center; font-family: 'PingFang TC', sans-serif;}
+        .card { background: white; padding: 50px 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(139,115,85,0.08); width: 100%; max-width: 400px; border-top: 6px solid var(--primary);}
+        h1 { color: var(--primary); margin-bottom: 15px; font-size: 24px;}
+        p { color: #666; line-height: 1.8; font-size: 15px; margin-bottom: 30px;}
+        .btn { display: inline-block; padding: 14px 35px; background: var(--primary); color: white; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 16px; transition: 0.3s; width: 100%; box-sizing: border-box;}
+        .btn-outline { display: inline-block; padding: 14px 35px; background: #fff; color: var(--primary); border: 2px solid var(--primary); text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 16px; margin-top: 15px; width: 100%; box-sizing: border-box;}
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>🎉 訂單已成功送出！</h1>
-        <p>感謝您的購買！<br>若尚未匯款，請於 24 小時內匯入指定帳戶，<br>並私訊官方 LINE 告知我們哦！</p>
-        <a href="index.html" class="btn">回首頁繼續逛</a>
+        <div style="font-size: 50px; margin-bottom: 15px;">🎉</div>
+        <h1>訂單已成功送出！</h1>
+        <p>非常感謝您的購買！<br>若選擇匯款，請於 24 小時內完成，<br>並記得私訊官方 LINE 告知我們喔！</p>
+        <a href="my_orders.html" class="btn">查看我的訂單</a>
+        <a href="index.html" class="btn-outline">回首頁繼續逛</a>
     </div>
 </body>
 </html>

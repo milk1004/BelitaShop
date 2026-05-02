@@ -3,78 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <!-- ✨ 新增：專門給 LINE / FB 抓取預覽圖用的品牌 OG 標籤 -->
-    <meta property="og:title" content="Belita SELECT | 日本韓國連線代購">
-    <meta property="og:description" content="點擊查看代購好物與專屬優惠！最新連線商品熱賣中。">
-    <meta property="og:image" content="https://i.ibb.co/jvQ3yVBp/S-35160091.jpg">
-    <meta property="og:type" content="website">
-
     <title>Belita | 商品詳情</title>
     <style>
-        :root { --primary: #8b7355; --bg: #faf8f5; }
-        * { box-sizing: border-box; font-family: sans-serif; }
-        body { margin: 0; background: var(--bg); padding: 20px; }
-        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .back-btn { display: inline-block; margin-bottom: 20px; color: #888; text-decoration: none; font-weight: bold; }
-        img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; margin-bottom: 20px; background: #f9f9f9; }
-        h1 { font-size: 20px; margin: 0 0 10px 0; line-height: 1.4; color: #333;}
-        .price { color: var(--primary); font-size: 22px; font-weight: bold; margin-bottom: 20px; }
+        :root { --primary: #8b7355; --bg: #fdfaf7; }
+        * { box-sizing: border-box; font-family: 'PingFang TC', sans-serif; }
+        body { margin: 0; background: var(--bg); padding: 20px; color: #333;}
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 8px 25px rgba(139,115,85,0.06); }
+        .back-btn { display: inline-block; margin-bottom: 20px; color: #888; text-decoration: none; font-weight: bold; font-size: 15px;}
+        img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 16px; margin-bottom: 20px; background: #f4f4f4;}
+        h1 { font-size: 22px; margin: 0 0 10px 0; line-height: 1.4;}
+        .price { color: var(--primary); font-size: 24px; font-weight: bold; margin-bottom: 8px; }
+        .stock-tag { font-size: 14px; color: #888; margin-bottom: 25px; font-weight: bold; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #555;}
-        select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; background: #fafafa;}
-        
+        select { width: 100%; padding: 14px; border: 1.5px solid #eee; border-radius: 12px; font-size: 16px; background: #fafafa; outline: none;}
+        select:focus { border-color: var(--primary); background: #fff;}
         .qty-control { display: flex; align-items: center; gap: 15px; }
-        .qty-btn { width: 45px; height: 45px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 20px; cursor: pointer; }
-        input[type="number"] { width: 60px; text-align: center; border: none; font-size: 18px; font-weight: bold; }
-        
-        /* 按鈕群組 */
-        .btn-add { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        
-        /* ✨ 新增：LINE 分享按鈕樣式 */
-        .btn-share-line { 
-            width: 100%; 
-            padding: 16px; 
-            background: #06C755; 
-            color: #fff; 
-            border: none; 
-            border-radius: 10px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-top: 12px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-        }
+        .qty-btn { width: 45px; height: 45px; border-radius: 10px; border: 1.5px solid #ddd; background: #fff; font-size: 20px; cursor: pointer; color: #555;}
+        .btn-add { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px;}
+        .btn-add:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-share-line { width: 100%; padding: 16px; background: #06C755; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.3s;}
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-btn">← 返回首頁</a>
-        <img id="img" src="" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
-        <h1 id="name">商品載入中...</h1>
+        <a href="index.html" class="back-btn">← 返回賣場</a>
+        <img id="img" src="" onerror="this.src='https://placehold.co/400x400?text=Belita'">
+        <h1 id="name">載入中...</h1>
         <div class="price" id="price">NT$ 0</div>
+        <div class="stock-tag" id="stock-display">狀態確認中...</div>
 
-        <!-- ✨ 規格選擇區塊 (預設隱藏，有規格時才會靠 JS 顯示) -->
         <div class="form-group" id="spec-group" style="display: none;">
             <label>選擇規格</label>
-            <select id="spec"></select>
+            <select id="spec-select"></select>
         </div>
         
         <div class="form-group">
             <label>購買數量</label>
             <div class="qty-control">
                 <button class="qty-btn" onclick="changeQty(-1)">-</button>
-                <input type="number" id="qty" value="1" readonly>
+                <input type="number" id="qty" value="1" readonly style="width:50px; text-align:center; border:none; font-size:18px; font-weight:bold; background:transparent; outline:none;">
                 <button class="qty-btn" onclick="changeQty(1)">+</button>
             </div>
         </div>
 
-        <button class="btn-add" onclick="addToCart()">🛒 加入購物車</button>
-        <!-- ✨ LINE 分享按鈕 -->
+        <button class="btn-add" id="add-btn" onclick="addToCart()">🛒 加入購物車</button>
         <button class="btn-share-line" onclick="shareToLine()">💬 分享給 LINE 好友</button>
     </div>
 
@@ -82,51 +55,71 @@
         const params = new URLSearchParams(window.location.search);
         const pName = params.get('name') || '未知商品';
         const pPrice = parseInt(params.get('price')) || 0;
-        const pImg = params.get('img') || '';
-        const specsStr = params.get('specs') || '';
+        const pStock = parseInt(params.get('stock')) || 0;
+        const pSpecs = params.get('specs') || '';
+        
+        let currentPrice = pPrice; let currentStock = pStock; let specData = {};
 
-        // 渲染畫面
         document.getElementById('name').innerText = pName;
-        document.getElementById('price').innerText = `NT$ ${pPrice}`;
-        if(pImg) document.getElementById('img').src = pImg;
+        document.getElementById('img').src = params.get('img');
 
-        // 處理規格
-        if (specsStr) {
+        if (pSpecs && pSpecs !== 'null' && pSpecs !== 'undefined') {
+            const select = document.getElementById('spec-select');
             document.getElementById('spec-group').style.display = 'block';
-            specsStr.split(/,|，/).forEach(s => {
-                if(s.trim()) document.getElementById('spec').add(new Option(s.trim(), s.trim()));
+            
+            pSpecs.split(',').forEach(item => {
+                const parts = item.split(':');
+                if(parts[0]) {
+                    const name = parts[0];
+                    const price = parts[1] ? parseInt(parts[1]) : pPrice;
+                    const stock = parts[2] ? parseInt(parts[2]) : 0;
+                    specData[name] = { price, stock };
+                    select.add(new Option(name, name));
+                }
             });
+
+            if(select.options.length > 0) {
+                select.onchange = () => { const data = specData[select.value]; updateDisplay(data.price, data.stock); };
+                updateDisplay(specData[select.value].price, specData[select.value].stock);
+            }
+        } else {
+            updateDisplay(pPrice, pStock);
+        }
+
+        function updateDisplay(price, stock) {
+            currentPrice = price; currentStock = stock;
+            document.getElementById('price').innerText = `NT$ ${price}`;
+            const display = document.getElementById('stock-display'); const btn = document.getElementById('add-btn');
+            
+            if (stock <= 0) {
+                display.innerHTML = '<span style="color:#d32f2f;">❌ 此款式已售完</span>';
+                btn.disabled = true; btn.innerText = '暫時售完';
+            } else {
+                display.innerText = `📦 剩餘現貨：${stock}`;
+                btn.disabled = false; btn.innerText = '🛒 加入購物車';
+            }
+            document.getElementById('qty').value = 1;
         }
 
         function changeQty(n) {
-            let input = document.getElementById('qty');
-            let val = parseInt(input.value) + n;
-            if(val >= 1 && val <= 20) input.value = val;
+            const input = document.getElementById('qty'); let val = parseInt(input.value) + n;
+            if(val >= 1 && val <= currentStock) input.value = val;
         }
 
         function addToCart() {
             let cart = JSON.parse(localStorage.getItem('belita_cart') || '[]');
-            let spec = specsStr ? document.getElementById('spec').value : '';
             let qty = parseInt(document.getElementById('qty').value);
+            let specName = document.getElementById('spec-group').style.display !== 'none' ? document.getElementById('spec-select').value : '';
             
-            cart.push({ name: pName, price: pPrice, img: pImg, spec: spec, qty: qty });
+            cart.push({ name: pName, price: currentPrice, img: params.get('img'), spec: specName, qty: qty });
             localStorage.setItem('belita_cart', JSON.stringify(cart));
-            
-            alert('🛒 已成功加入購物車！');
-            window.location.href = 'index.html'; 
+            alert('🛒 已成功加入購物車！'); window.location.href = 'index.html';
         }
 
-        // 自動生成帶有圖片預覽的分享連結 (iPhone 友善版)
         function shareToLine() {
-            // 抓取目前這個 GitHub 商品頁的真實網址
-            const currentUrl = window.location.href;
-            
-            // 組合推坑文案
-            const message = `✨ 快來看看這個代購好物：\n【${pName}】只要 NT$ ${pPrice}！\n\n👇 點擊下方連結直接看商品 👇\n${currentUrl}`;
-            
-            // 跳轉到 LINE
-            const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
-            window.location.href = lineUrl;
+            const url = window.location.href;
+            const msg = `✨ 快來看看這款好物：\n【${pName}】只要 NT$ ${currentPrice}！\n\n👇 點擊下方連結直接看商品 👇\n${url}`;
+            window.location.href = `https://line.me/R/msg/text/?${encodeURIComponent(msg)}`;
         }
     </script>
 </body>

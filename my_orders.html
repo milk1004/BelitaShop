@@ -5,26 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Belita | 我的訂單</title>
     <style>
-        :root { --primary-color: #8b7355; --bg-color: #faf8f5; --card-bg: #ffffff; }
+        :root { --primary: #8b7355; --bg: #fdfaf7; }
         * { box-sizing: border-box; font-family: 'PingFang TC', sans-serif; }
-        body { margin: 0; background: var(--bg-color); color: #333; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; max-width: 800px; margin: 0 auto 30px auto; padding-bottom: 15px; border-bottom: 2px solid #ddd; }
-        .header h1 { margin: 0; color: var(--primary-color); font-size: 24px; }
-        .btn-home { background: #eee; color: #333; padding: 8px 16px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; }
+        body { margin: 0; background: var(--bg); color: #333; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; max-width: 800px; margin: 0 auto 30px auto; padding-bottom: 15px; border-bottom: 2px solid #eee; }
+        .header h1 { margin: 0; color: var(--primary); font-size: 24px; }
+        .btn-home { background: #fff; color: #555; padding: 8px 16px; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px; border: 1.5px solid #ddd; transition: 0.3s;}
+        .btn-home:hover { background: var(--primary); color: #fff; border-color: var(--primary);}
         .container { max-width: 800px; margin: 0 auto; }
-        .order-card { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--primary-color); }
+        .order-card { background: #fff; padding: 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(139,115,85,0.06); border-left: 6px solid var(--primary); }
         .order-header { display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
-        .order-items { font-size: 16px; font-weight: bold; color: #444; margin-bottom: 10px; line-height: 1.5; }
-        .order-details { font-size: 14px; color: #666; margin-bottom: 10px; line-height: 1.6;}
-        .empty-state { text-align: center; padding: 50px 0; color: #888; }
+        .order-items { font-size: 16px; font-weight: bold; color: #444; margin-bottom: 12px; line-height: 1.6; white-space: pre-line;}
+        .order-details { font-size: 14px; color: #666; margin-bottom: 0; line-height: 1.8; background: #fafafa; padding: 12px; border-radius: 8px;}
+        .empty-state { text-align: center; padding: 60px 0; color: #888; font-size: 16px; background: #fff; border-radius: 16px;}
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>📦 我的訂單</h1>
-        <a href="index.html" class="btn-home">回首頁</a>
+        <h1>📦 購買紀錄</h1>
+        <a href="index.html" class="btn-home">回賣場</a>
     </div>
-    <div class="container" id="orders-container"><div class="empty-state">載入訂單中...</div></div>
+    <div class="container" id="orders-container"><div class="empty-state">🔄 正在讀取訂單資料...</div></div>
+    
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
 
@@ -37,11 +39,11 @@
             const fullName = `${savedUser} (LINE: ${savedLine})`;
 
             try {
-                const response = await fetch(scriptURL + '?type=my_orders&user=' + encodeURIComponent(fullName));
-                const myOrders = await response.json();
+                const res = await fetch(scriptURL + '?type=my_orders&user=' + encodeURIComponent(fullName));
+                const myOrders = await res.json();
 
                 if (myOrders.length === 0) {
-                    container.innerHTML = '<div class="empty-state">您目前還沒有訂單紀錄喔！</div>'; return;
+                    container.innerHTML = '<div class="empty-state">您目前還沒有訂單紀錄喔！趕快去逛逛吧～</div>'; return;
                 }
                 container.innerHTML = '';
                 myOrders.forEach(order => {
@@ -49,14 +51,13 @@
                         <div class="order-card">
                             <div class="order-header"><span>訂單時間：${order.time}</span></div>
                             <div class="order-items">🛒 ${order.items}</div>
-                            <div class="order-details" style="margin-bottom: 0;">
-                                🚚 取貨：${order.delivery} <br>
-                                💳 匯款：${order.bank5 || '免填寫'} <br>
-                                <strong style="color: #d32f2f;">💰 總額：NT$ ${order.totalAmount}</strong>
+                            <div class="order-details">
+                                🚚 取貨方式：${order.delivery} <br>
+                                💳 匯款後五碼：${order.bank5 || '免填寫'}
                             </div>
                         </div>`;
                 });
-            } catch (error) { container.innerHTML = '<div class="empty-state" style="color:red;">❌ 讀取失敗</div>'; }
+            } catch (error) { container.innerHTML = '<div class="empty-state" style="color:#d32f2f;">❌ 讀取失敗，請檢查網路連線。</div>'; }
         }
         window.onload = loadMyOrders;
     </script>

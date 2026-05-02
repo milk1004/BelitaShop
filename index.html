@@ -3,84 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Belita 代購 | 首頁</title>
-    <style> 
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600&display=swap');        :root { --primary-color: #8b7355; --bg-color: #fdfaf7; --text-main: #333; --text-light: #888; }
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600&display=swap');
+        :root { --primary: #8b7355; --bg: #fdfaf7; }
         * { box-sizing: border-box; font-family: 'PingFang TC', sans-serif; }
-        body { margin: 0; background-color: var(--bg-color); color: var(--text-main); }
-        
-        /* 導覽列 */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.03); position: sticky; top: 0; z-index: 100; }
-        .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-img { width: 80px; height: 80px; object-fit: contain; }
-        .logo-text-group { line-height: 1.2; }
-        .logo-sub { font-size: 12px; color: var(--text-light); }
-        .logo-main { font-size: 20px; font-weight: bold; }
-        
-        /* 右上角按鈕區 */
-        .header-actions { display: flex; align-items: center; gap: 10px; }
-        .btn-outline { padding: 8px 18px; border: 1.5px solid var(--text-main); background: transparent; color: var(--text-main); border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-outline:hover, .btn-primary { background: var(--text-main); color: #fff; }
-        .btn-primary { border: 1.5px solid var(--text-main); }
-        
-        /* 橫幅與公告區 */
+        body { margin: 0; background-color: var(--bg); color: #333; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.04); position: sticky; top: 0; z-index: 100; }
+        .logo-main { font-size: 22px; font-weight: bold; color: var(--primary); letter-spacing: 1px;}
+        .header-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;}
+        .btn-outline { padding: 8px 16px; border: 1.5px solid var(--primary); background: #fff; color: var(--primary); border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.3s; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-outline:hover { background: var(--primary); color: #fff; }
         .banner-container { padding: 40px 20px; text-align: center; }
-        .banner { max-width: 900px; margin: 0 auto; background: #fff; padding: 50px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(139, 115, 85, 0.05); }
-        .banner-tag { display: inline-block; background: #f4eee9; color: var(--primary-color); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 15px; }
-        .banner h1 { 
-            font-family: 'Noto Serif TC', serif; /* ✨ 換上高質感明體 */
-            font-size: 32px; 
-            font-weight: 600;
-            margin: 0 0 15px 0; 
-            line-height: 1.4; 
-            color: var(--primary-color); 
-            letter-spacing: 4px; /* ✨ 字距拉開，精品氣質馬上出來 */
-        }
-        .banner p { color: var(--text-light); margin: 0; }
-        
-        /* 賣場公告區塊樣式 */
-        .notice-box { background: #fdfaf7; border: 1px dashed #d1c4b7; padding: 18px 25px; border-radius: 12px; margin: 25px auto 0; text-align: left; display: inline-block; color: #555; font-size: 15px; line-height: 1.8; max-width: 100%; }
-        .notice-box strong { color: var(--primary-color); }
-        
-        /* 分類按鈕 */
-        .filters { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin: 20px 0 30px 0; padding: 0 20px; }
-        .filter-btn { padding: 8px 20px; border: 1px solid #ddd; background: #fff; border-radius: 25px; cursor: pointer; transition: 0.3s; color: var(--text-light); font-size: 14px;}
-        .filter-btn.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
-        
-        /* 商品列表 */
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; padding: 0 20px 60px 20px; }
-        .product-card { background: #fff; border-radius: 16px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); cursor: pointer; transition: 0.3s; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
-        .product-image-container { width: 100%; aspect-ratio: 1; border-radius: 12px; overflow: hidden; margin-bottom: 15px; background: #f9f9f9;}
+        .banner { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px 30px; border-radius: 20px; box-shadow: 0 8px 25px rgba(139,115,85,0.06); }
+        .banner h1 { font-family: 'Noto Serif TC', serif; font-size: 30px; color: var(--primary); letter-spacing: 3px; margin: 0 0 10px 0;}
+        .notice-box { background: #fdfaf7; border: 1px dashed #d1c4b7; padding: 18px; border-radius: 12px; margin-top: 25px; text-align: left; font-size: 14px; line-height: 1.8; color: #555;}
+        .filters { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; padding: 0 15px;}
+        .filter-btn { padding: 8px 20px; border: 1.5px solid #eee; background: #fff; border-radius: 25px; cursor: pointer; color: #666; font-weight: bold; font-size: 14px; transition: 0.3s;}
+        .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; max-width: 1000px; margin: 0 auto; padding: 0 20px 60px; }
+        .product-card { background: #fff; border-radius: 16px; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); position: relative; transition: 0.3s; }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        .sold-out-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; z-index: 2; font-weight: bold;}
+        .product-image-container { width: 100%; aspect-ratio: 1; border-radius: 12px; overflow: hidden; margin-bottom: 12px; background: #f4f4f4;}
         .product-image-container img { width: 100%; height: 100%; object-fit: cover; }
-        .product-title { font-size: 16px; margin: 0 0 8px 0; font-weight: normal; }
-        .product-price { color: var(--primary-color); font-weight: bold; margin: 0; }
-        
-        /* 手機版排版優化 */
+        .product-title { font-size: 15px; margin: 0 0 6px 0; color: #333; line-height: 1.3;}
+        .product-price { color: var(--primary); font-weight: bold; margin: 0; font-size: 16px;}
         @media (max-width: 768px) {
-            header { flex-direction: column; gap: 12px; padding: 12px 15px; }
-            .logo-img { width: 55px; height: 55px; }
-            .header-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 8px; }
-            .btn-outline { padding: 6px 14px; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
-            .banner-container { padding: 25px 15px; }
-            .banner { padding: 30px 20px; }
-            .banner h1 { font-size: 22px; }
-            .notice-box { font-size: 13.5px; padding: 15px; width: 100%; }
-            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 15px 60px 15px; }
+            header { flex-direction: column; padding: 15px; gap: 12px; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 15px 50px;}
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo-area">
-            <img src="logo.png" alt="Belita Logo" class="logo-img" onerror="this.style.display='none'">
-            <div class="logo-text-group">
-                
-                <div class="logo-main">Belita 賣場</div>
-            </div>
-        </div>
-        
+        <div class="logo-main">Belita</div>
         <div class="header-actions">
             <button class="btn-outline" id="user-status-btn">登入 / 註冊</button>
             <button class="btn-outline" id="my-orders-btn" onclick="location.href='my_orders.html'" style="display: none;">📦 訂單</button>
@@ -91,105 +49,70 @@
     <div class="banner-container">
         <div class="banner">
             <h1>日本/韓國連線代購</h1>
-            <p>點擊商品即可加入購物車。目前上架 : <span id="total-count">-</span> 件</p>
-            
+            <p style="margin:0; color:#888;">目前熱銷上架 : <span id="total-count" style="font-weight:bold; color:var(--primary);">-</span> 件好物</p>
             <div class="notice-box">
                 <div>✈️ <strong>近期連線：</strong>5/21 - 5/24 沖繩連線採購</div>
-                <div>⏳ <strong>結單時間：</strong>出發前一日 23:59 準時收單</div>
-                <div>💡 <strong>購物須知：</strong>下單後請於 24 小時內完成匯款，支援超商取貨</div>
+                <div>💡 <strong>購物須知：</strong>結帳不代表一定有貨，以實際採購數量為準。</div>
             </div>
         </div>
     </div>
 
     <div class="filters">
         <button class="filter-btn active">全部</button>
-        <button class="filter-btn">伴手禮</button>
-        <button class="filter-btn">零食</button>
-        <button class="filter-btn">保養品</button>
-        <button class="filter-btn">生活雜貨</button>
+        <button class="filter-btn">伴手禮</button><button class="filter-btn">零食</button>
+        <button class="filter-btn">保養品</button><button class="filter-btn">生活雜貨</button>
     </div>
 
-    <div class="products-grid" id="products-container">
-        <!-- 這裡不需要寫讀取中了，因為快取會瞬間蓋過去 -->
-    </div>
+    <div class="products-grid" id="products-container"><p style="grid-column:1/-1; text-align:center; color:#888;">載入中...</p></div>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
         let allProducts = [];
 
-        function updateAuthStatus() {
-            const currentUser = localStorage.getItem('belita_user');
-            const btn = document.getElementById('user-status-btn');
-            const orderBtn = document.getElementById('my-orders-btn');
-            
-            if (currentUser) {
-                btn.innerText = '登出 (' + currentUser + ')';
-                orderBtn.style.display = 'inline-block';
-                btn.onclick = function() {
-                    if (confirm('確定要登出帳號嗎？')) {
-                        localStorage.removeItem('belita_user');
-                        localStorage.removeItem('belita_line');
-                        location.reload(); 
-                    }
-                };
-            } else {
-                btn.innerText = '登入 / 註冊';
-                orderBtn.style.display = 'none';
-                btn.onclick = function() { location.href = 'login.html'; };
-            }
-        }
-
-        function updateCartCount() {
-            const cart = JSON.parse(localStorage.getItem('belita_cart') || '[]');
-            document.getElementById('cart-count').innerText = cart.length;
-        }
-
-        // ✨ 升級重點：載入商品資料 (快取技術)
         async function loadProducts() {
             const container = document.getElementById('products-container');
-            
-            // 1. 先從手機記憶體找暫存資料
-            const cachedData = sessionStorage.getItem('belita_products_cache');
-            
-            // 如果有暫存，瞬間顯示畫面！(不用等 Google 回應)
-            if (cachedData) {
-                allProducts = JSON.parse(cachedData);
-                renderProducts(allProducts);
-                document.getElementById('total-count').innerText = allProducts.length;
-            } else {
-                // 只有第一次進網站，沒暫存時才顯示讀取中
-                container.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 40px; color: #888;">商品資料讀取中，請稍候...</div>';
-            }
-
-            // 2. 背景偷偷向 Google 抓最新資料
+            const cached = sessionStorage.getItem('belita_products_cache');
+            if (cached) { allProducts = JSON.parse(cached); renderProducts(allProducts); }
             try {
-                const res = await fetch(scriptURL);
-                const freshProducts = await res.json();
-                
-                // 比對資料，如果老闆有偷偷上架新東西，才重新渲染畫面並更新快取
-                if (JSON.stringify(freshProducts) !== cachedData) {
-                    allProducts = freshProducts;
-                    sessionStorage.setItem('belita_products_cache', JSON.stringify(allProducts)); // 存入記憶體
+                const res = await fetch(scriptURL); const fresh = await res.json();
+                if (JSON.stringify(fresh) !== cached) {
+                    allProducts = fresh; sessionStorage.setItem('belita_products_cache', JSON.stringify(allProducts));
                     renderProducts(allProducts);
-                    document.getElementById('total-count').innerText = allProducts.length;
                 }
-            } catch (e) { 
-                if (!cachedData) container.innerHTML = '<div style="text-align: center; grid-column: 1/-1; color: red;">❌ 商品讀取失敗，請檢查網路</div>'; 
-            }
+            } catch (e) { if(!cached) container.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:red;">讀取失敗，請檢查網路</p>'; }
         }
 
         function renderProducts(products) {
             const container = document.getElementById('products-container');
-            container.innerHTML = products.length === 0 ? '<div style="text-align: center; grid-column: 1/-1; padding: 40px; color: #888;">目前此分類暫無商品。</div>' : '';
-            
+            container.innerHTML = '';
+            document.getElementById('total-count').innerText = products.length;
+            if(products.length === 0) { container.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#888;">此分類暫無商品</p>'; return; }
+
             products.forEach(p => {
-                const link = `product.html?name=${encodeURIComponent(p.name)}&price=${p.price}&img=${encodeURIComponent(p.img)}&specs=${encodeURIComponent(p.specs || '')}`;
+                let displayPrice = p.price + (p.specs && p.specs.includes(':') ? ' 起' : '');
+                
+                // 檢查是否所有規格都售完 (防呆邏輯)
+                let isSoldOut = false;
+                if(p.specs && p.specs.includes(':')) {
+                    // 如果有規格，檢查是否所有規格庫存加起來 <= 0
+                    let totalSpecStock = 0;
+                    p.specs.split(',').forEach(s => {
+                        const parts = s.split(':');
+                        if(parts[2]) totalSpecStock += parseInt(parts[2]);
+                    });
+                    if(totalSpecStock <= 0) isSoldOut = true;
+                } else {
+                    if (parseInt(p.stock) <= 0) isSoldOut = true;
+                }
+                
+                const link = `product.html?name=${encodeURIComponent(p.name)}&price=${p.price}&img=${encodeURIComponent(p.img)}&specs=${encodeURIComponent(p.specs || '')}&stock=${p.stock}`;
                 container.innerHTML += `
-                    <a href="${link}" style="text-decoration: none; color: inherit;">
-                        <div class="product-card">
-                            <div class="product-image-container"><img src="${p.img}" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=No+Image'"></div>
+                    <a href="${link}" style="text-decoration:none; color:inherit;">
+                        <div class="product-card" style="${isSoldOut ? 'opacity: 0.6;' : ''}">
+                            ${isSoldOut ? '<div class="sold-out-badge">已售完</div>' : ''}
+                            <div class="product-image-container"><img src="${p.img}" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=Belita'"></div>
                             <h3 class="product-title">${p.name}</h3>
-                            <p class="product-price">NT$ ${p.price}</p>
+                            <p class="product-price">NT$ ${displayPrice}</p>
                         </div>
                     </a>`;
             });
@@ -197,16 +120,25 @@
 
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.querySelector('.filter-btn.active').classList.remove('active');
+                document.querySelector('.filter-btn.active')?.classList.remove('active');
                 this.classList.add('active');
-                const cat = this.innerText;
-                renderProducts(cat === '全部' ? allProducts : allProducts.filter(p => p.category === cat));
+                const cat = this.innerText.trim();
+                renderProducts(cat === '全部' ? allProducts : allProducts.filter(p => p.category && p.category.trim() === cat));
             });
         });
 
         window.onload = () => { 
-            updateAuthStatus(); 
-            updateCartCount();
+            const user = localStorage.getItem('belita_user');
+            const userBtn = document.getElementById('user-status-btn');
+            if(user) { 
+                userBtn.innerText = '登出 (' + user + ')';
+                userBtn.classList.remove('btn-primary');
+                document.getElementById('my-orders-btn').style.display = 'inline-block';
+                userBtn.onclick = () => { if (confirm('確定要登出嗎？')) { localStorage.removeItem('belita_user'); localStorage.removeItem('belita_line'); location.reload(); } };
+            } else {
+                userBtn.onclick = () => { location.href = 'login.html'; };
+            }
+            document.getElementById('cart-count').innerText = JSON.parse(localStorage.getItem('belita_cart') || '[]').length;
             loadProducts(); 
         };
     </script>

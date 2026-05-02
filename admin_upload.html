@@ -3,64 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="上架神器">
     <title>Belita | 手機快速上架</title>
     <style>
-        * { box-sizing: border-box; font-family: sans-serif; }
-        body { background: #f4f6f8; padding: 15px; margin: 0; }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
-        h1 { font-size: 20px; color: #8b7355; text-align: center; margin-bottom: 20px;}
-        .form-group { margin-bottom: 18px; }
-        label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #555;}
-        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; background: #fafafa; outline: none;}
-        input:focus, select:focus { border-color: #8b7355; background: #fff;}
-        .btn-submit { width: 100%; padding: 16px; background: #8b7355; color: #fff; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s;}
-        .btn-submit:disabled { background: #ccc;}
-        .status { text-align: center; font-size: 14px; font-weight: bold; color: #8b7355; margin-top: 15px; display: none; }
-        .pwd-input { text-align: center; letter-spacing: 8px; font-size: 22px; font-weight: bold; padding: 15px;}
+        :root { --primary: #8b7355; --bg: #fdfaf7; }
+        * { box-sizing: border-box; font-family: 'PingFang TC', sans-serif; }
+        body { background: var(--bg); padding: 15px; margin: 0; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        h1 { font-size: 20px; color: var(--primary); text-align: center; margin-bottom: 25px;}
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #666;}
+        input, select { width: 100%; padding: 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 16px; background: #fafafa; outline: none; transition: 0.3s;}
+        input:focus { border-color: var(--primary); background: #fff;}
+        .btn-submit { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-submit:disabled { background: #ccc; }
+        .spec-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; background: #fdfaf7; padding: 10px; border-radius: 10px; border: 1px dashed #d1c4b7;}
+        .spec-row input { padding: 10px; font-size: 15px; border: 1px solid #ddd; }
+        .btn-del-spec { background: #ffebee; color: #d32f2f; border: none; border-radius: 8px; cursor: pointer; padding: 0 15px; font-weight: bold; }
+        .btn-add-spec { width: 100%; padding: 14px; background: #fff; color: var(--primary); border: 2px dashed var(--primary); border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-    
-    <!-- 老闆專屬登入畫面 -->
     <div class="container" id="login-panel" style="display: none; margin-top: 40px;">
         <h1>🔒 老闆身分驗證</h1>
-        <div class="form-group">
-            <input type="password" id="admin-pwd-input" class="pwd-input" placeholder="輸入數字密碼" inputmode="numeric" pattern="[0-9]*">
-        </div>
-        <button class="btn-submit" id="login-btn" onclick="verifyAdmin()">進入上架系統</button>
+        <div class="form-group"><input type="password" id="admin-pwd-input" style="text-align:center; letter-spacing:8px; font-size:22px;" placeholder="輸入密碼" inputmode="numeric"></div>
+        <button class="btn-submit" onclick="verifyAdmin()">進入上架系統</button>
     </div>
 
-    <!-- 上架系統畫面 -->
     <div class="container" id="admin-panel" style="display: none;">
         <h1>📸 現場連線快速上架</h1>
         <form id="upload-form">
             <div class="form-group"><label>1. 拍攝照片</label><input type="file" id="imageFile" accept="image/*" required></div>
             <div class="form-group"><label>2. 商品名稱</label><input type="text" id="productName" required></div>
-            <div class="form-group"><label>3. 價格 (NTD)</label><input type="number" id="price" inputmode="numeric" required></div>
-            
-            <!-- 可選擇也可自行輸入的分類區塊 -->
+            <div class="form-group"><label>3. 基本價格 (NTD)</label><input type="number" id="price" inputmode="numeric" required></div>
             <div class="form-group">
                 <label>4. 分類</label>
-                <input type="text" id="category" list="category-options" placeholder="點擊選擇預設，或直接輸入新分類" required>
-                <datalist id="category-options">
-                    <option value="伴手禮"></option>
-                    <option value="零食"></option>
-                    <option value="保養品"></option>
-                    <option value="生活雜貨"></option>
-                </datalist>
+                <input type="text" id="category" list="category-options" placeholder="選擇或輸入新分類" required>
+                <datalist id="category-options"><option value="伴手禮"></option><option value="零食"></option><option value="保養品"></option><option value="生活雜貨"></option></datalist>
             </div>
-
-            <!-- ✨ 新增：規格輸入框 -->
+            <div class="form-group"><label>5. 總庫存 (無規格時適用)</label><input type="number" id="stock" value="10" inputmode="numeric" required></div>
             <div class="form-group">
-                <label>5. 商品規格 (選填，請用逗號分隔)</label>
-                <input type="text" id="specs" placeholder="例如：紅色, 藍色, 黑色 或 玫瑰味, 檸檬味">
+                <label>6. 商品規格 (選填)</label>
+                <div style="font-size: 12px; color: #888; margin-bottom: 10px;">若新增規格，將以規格內的價格與庫存為主。</div>
+                <div id="spec-container"></div>
+                <button type="button" class="btn-add-spec" onclick="addSpecRow()">➕ 新增規格 (款式 / 價格 / 庫存)</button>
             </div>
-
-            <button type="submit" class="btn-submit" id="submit-btn">上傳並上架</button>
-            <div id="status-msg" class="status">圖片與資料處理中...</div>
+            <button type="submit" class="btn-submit" id="submit-btn" style="margin-top: 10px;">上傳並上架</button>
+            <div id="status-msg" style="text-align:center; display:none; margin-top:15px; color:var(--primary); font-weight:bold;">圖片與資料處理中，請稍候...</div>
         </form>
     </div>
     
@@ -69,94 +57,59 @@
         const IMGBB_API_KEY = '4bd3a0f7ef60563653ce5f04d1d67588'; 
 
         let adminCode = sessionStorage.getItem('belita_admin_code');
-        const loginPanel = document.getElementById('login-panel');
-        const adminPanel = document.getElementById('admin-panel');
-        
-        if (!adminCode) {
-            loginPanel.style.display = 'block'; 
-        } else {
-            adminPanel.style.display = 'block'; 
-        }
+        if (!adminCode) document.getElementById('login-panel').style.display = 'block'; 
+        else document.getElementById('admin-panel').style.display = 'block';
 
-        // 即時去 GAS 後台驗證密碼
         async function verifyAdmin() {
             const pwdValue = document.getElementById('admin-pwd-input').value;
-            if (!pwdValue) { alert('請輸入密碼！'); return; }
-
-            const loginBtn = document.getElementById('login-btn');
-            loginBtn.innerText = '驗證中...';
-            loginBtn.disabled = true;
-
             try {
-                const response = await fetch(scriptURL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({
-                        action: 'verify_admin', 
-                        adminPassword: pwdValue
-                    }) 
-                });
-                
-                const result = await response.json();
-
+                const res = await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: 'verify_admin', adminPassword: pwdValue }) });
+                const result = await res.json();
                 if (result.result === 'success') {
-                    adminCode = pwdValue;
-                    sessionStorage.setItem('belita_admin_code', adminCode);
-                    loginPanel.style.display = 'none';
-                    adminPanel.style.display = 'block';
-                } else {
-                    alert('❌ 密碼錯誤，請重新輸入！');
-                    document.getElementById('admin-pwd-input').value = '';
-                }
-            } catch (error) {
-                alert('網路異常，請稍後再試');
-            } finally {
-                loginBtn.innerText = '進入上架系統';
-                loginBtn.disabled = false;
-            }
+                    sessionStorage.setItem('belita_admin_code', pwdValue); location.reload();
+                } else alert('❌ 密碼錯誤');
+            } catch (e) { alert('驗證失敗'); }
         }
 
-        // 上架表單送出邏輯
+        function addSpecRow() {
+            const container = document.getElementById('spec-container');
+            const div = document.createElement('div');
+            div.className = 'spec-row';
+            div.innerHTML = `<input type="text" class="spec-name" placeholder="規格名稱" style="flex:2; min-width:100px;"><input type="number" class="spec-price" placeholder="價格" style="flex:1; min-width:70px;"><input type="number" class="spec-stock" placeholder="數量" style="flex:1; min-width:70px;"><button type="button" class="btn-del-spec" onclick="this.parentElement.remove()">刪</button>`;
+            container.appendChild(div);
+        }
+
         document.getElementById('upload-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            const msg = document.getElementById('status-msg');
-            
-            btn.disabled = true; 
-            msg.style.display = 'block';
+            const btn = document.getElementById('submit-btn'); const msg = document.getElementById('status-msg');
+            btn.disabled = true; msg.style.display = 'block';
+
+            let specsArr = [];
+            document.querySelectorAll('.spec-row').forEach(row => {
+                const n = row.querySelector('.spec-name').value.trim();
+                const p = row.querySelector('.spec-price').value.trim();
+                const s = row.querySelector('.spec-stock').value.trim();
+                if(n) specsArr.push(`${n}:${p ? p : document.getElementById('price').value}:${s ? s : 0}`);
+            });
 
             try {
-                const formData = new FormData();
-                formData.append('image', document.getElementById('imageFile').files[0]);
+                const formData = new FormData(); formData.append('image', document.getElementById('imageFile').files[0]);
                 const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
                 const imgData = await imgRes.json();
 
-                const response = await fetch(scriptURL, { 
+                await fetch(scriptURL, { 
                     method: 'POST', 
                     body: JSON.stringify({
-                        action: 'add_product',
-                        adminPassword: adminCode,
+                        action: 'add_product', adminPassword: adminCode,
                         productName: document.getElementById('productName').value,
                         category: document.getElementById('category').value,
                         price: document.getElementById('price').value,
-                        specs: document.getElementById('specs').value, // ✨ 更新：把規格一起打包送出
-                        imgUrl: imgData.data.url
+                        stock: document.getElementById('stock').value,
+                        specs: specsArr.join(','), imgUrl: imgData.data.url
                     }) 
                 });
-                
-                const result = await response.json();
-
-                if (result.result === 'success') {
-                    alert('✅ 上架成功！'); 
-                    document.getElementById('upload-form').reset(); 
-                } else {
-                    alert('❌ 上架失敗：' + (result.message || '未知錯誤'));
-                }
-            } catch (error) { 
-                alert('❌ 出錯了，請檢查網路連線'); 
-            } finally {
-                btn.disabled = false; 
-                msg.style.display = 'none';
-            }
+                alert('✅ 上架成功！'); location.reload();
+            } catch (error) { alert('❌ 出錯，請檢查網路'); } finally { btn.disabled = false; msg.style.display = 'none'; }
         });
     </script>
 </body>

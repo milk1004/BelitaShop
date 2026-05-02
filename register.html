@@ -5,188 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Belita | 會員註冊</title>
     <style>
-        :root {
-            --primary-color: #8b7355;
-            --primary-hover: #725d43;
-            --bg-color: #faf8f5;
-            --text-color: #4a4a4a;
-        }
-
-        * { box-sizing: border-box; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; }
-        
-        body { 
-            margin: 0; 
-            background: linear-gradient(135deg, #fdf6f0 0%, #faf8f5 100%);
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            color: var(--text-color);
-        }
-
-        .card { 
-            background: #fff; 
-            padding: 50px 40px; 
-            border-radius: 24px; 
-            width: 90%;
-            max-width: 420px; 
-            box-shadow: 0 15px 35px rgba(139, 115, 85, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: var(--primary-color);
-        }
-
-        .title { 
-            text-align: center; 
-            color: var(--primary-color); 
-            font-size: 28px; 
-            font-weight: 900; 
-            margin-bottom: 30px;
-            letter-spacing: 2px;
-        }
-
+        :root { --primary: #8b7355; --bg: #fdfaf7; }
+        * { box-sizing: border-box; font-family: 'PingFang TC', sans-serif; }
+        body { margin: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #444; }
+        .card { background: #fff; padding: 40px 30px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(139,115,85,0.08); border-top: 6px solid var(--primary); }
+        .title { text-align: center; color: var(--primary); font-size: 26px; font-weight: 900; margin-bottom: 25px; letter-spacing: 1px; }
         .form-group { margin-bottom: 20px; }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #888;
-            padding-left: 4px;
-        }
-
-        input { 
-            width: 100%; 
-            padding: 14px 18px; 
-            border: 1.5px solid #eee; 
-            border-radius: 12px; 
-            font-size: 16px; 
-            outline: none; 
-            transition: all 0.3s ease;
-            background-color: #f9f9f9;
-        }
-
-        input:focus { 
-            border-color: var(--primary-color); 
-            background-color: #fff;
-            box-shadow: 0 0 0 4px rgba(139, 115, 85, 0.1);
-        }
-
-        .btn { 
-            width: 100%; 
-            padding: 16px; 
-            background: var(--primary-color); 
-            color: #fff; 
-            border: none; 
-            border-radius: 12px; 
-            font-size: 18px;
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: all 0.3s ease;
-            margin-top: 10px;
-            box-shadow: 0 8px 20px rgba(139, 115, 85, 0.2);
-        }
-
-        .btn:hover { 
-            background: var(--primary-hover); 
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(139, 115, 85, 0.3);
-        }
-
-        .btn:disabled { 
-            background: #ccc; 
-            cursor: not-allowed; 
-        }
-
-        .footer-text {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 14px;
-            color: #aaa;
-        }
-
-        .footer-text a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: bold;
-        }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: bold; color: #777; }
+        input { width: 100%; padding: 14px 16px; border: 1.5px solid #eee; border-radius: 12px; font-size: 16px; outline: none; background: #fafafa; transition: 0.3s; }
+        input:focus { border-color: var(--primary); background: #fff; }
+        .btn { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .footer-text { text-align: center; margin-top: 25px; font-size: 14px; color: #888; }
+        .footer-text a { color: var(--primary); text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="title">Belita 會員註冊</div>
+        <div class="title">加入 Belita 會員</div>
         <form id="regForm">
-            <div class="form-group">
-                <label>社群暱稱</label>
-                <input type="text" id="social" placeholder="社群暱稱" required>
-            </div>
-            <div class="form-group">
-                <label>LINE 名稱</label>
-                <input type="text" id="line" placeholder="LINE 顯示名稱" required>
-            </div>
-            <div class="form-group">
-                <label>設定密碼</label>
-                <input type="password" id="pw" placeholder="請輸入 6 位以上密碼" minlength="6" required>
-            </div>
+            <div class="form-group"><label>社群暱稱</label><input type="text" id="social" placeholder="例如：FB 或 IG 名稱" required></div>
+            <div class="form-group"><label>LINE 顯示名稱</label><input type="text" id="line" placeholder="方便我們私訊聯繫您" required></div>
+            <div class="form-group"><label>設定密碼</label><input type="password" id="pw" placeholder="請輸入 6 位以上密碼" minlength="6" required></div>
             <button type="submit" class="btn" id="btn">立即註冊並登入</button>
         </form>
-        <div class="footer-text">
-            已有帳號？ <a href="index.html">返回首頁</a>
-        </div>
+        <div class="footer-text">已有帳號？ <a href="login.html">前往登入</a><br><br><a href="index.html" style="color:#aaa;">← 先回首頁逛逛</a></div>
     </div>
-
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec';
-        
         document.getElementById('regForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn'); 
-            const socialName = document.getElementById('social').value;
-            const lineName = document.getElementById('line').value;
-            const password = document.getElementById('pw').value;
-
-            btn.disabled = true;
-            btn.innerText = '處理中...';
-
+            e.preventDefault(); const btn = document.getElementById('btn'); 
+            btn.disabled = true; btn.innerText = '資料處理中...';
             try {
-                const response = await fetch(scriptURL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({ 
-                        action: 'register',
-                        socialName: socialName,
-                        lineName: lineName,
-                        password: password
-                    })      
-                });
-                
-                const result = await response.json();
+                const res = await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: 'register', socialName: document.getElementById('social').value, lineName: document.getElementById('line').value, password: document.getElementById('pw').value }) });
+                const result = await res.json();
                 if(result.result === 'success') {
-                    // ✨ 存入登入狀態，供結帳頁面自動帶入使用
-                    localStorage.setItem('belita_user', socialName);
-                    localStorage.setItem('belita_line', lineName);
-                    
-                    alert('🎉 註冊成功！已自動為您登入。');
-                    window.location.href = 'index.html';
-                } else {
-                    alert('註冊失敗，請稍後再試');
-                    btn.disabled = false;
-                    btn.innerText = '立即註冊並登入';
-                }
-            } catch (error) { 
-                alert('網路連線異常'); 
-                btn.disabled = false; 
-                btn.innerText = '立即註冊並登入';
-            }
+                    localStorage.setItem('belita_user', document.getElementById('social').value);
+                    localStorage.setItem('belita_line', document.getElementById('line').value);
+                    alert('🎉 註冊成功！已自動為您登入。'); window.location.href = 'index.html';
+                } else { alert('❌ 註冊失敗：' + (result.message || '請稍後再試')); btn.disabled = false; btn.innerText = '立即註冊並登入'; }
+            } catch (err) { alert('網路連線異常'); btn.disabled = false; btn.innerText = '立即註冊並登入'; }
         });
     </script>
 </body>
