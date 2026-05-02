@@ -10,23 +10,45 @@
         body { margin: 0; background: var(--bg); padding: 20px; }
         .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .back-btn { display: inline-block; margin-bottom: 20px; color: #888; text-decoration: none; font-weight: bold; }
-        img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; margin-bottom: 20px; }
-        h1 { font-size: 20px; margin: 0 0 10px 0; }
+        img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; margin-bottom: 20px; background: #f9f9f9; }
+        h1 { font-size: 20px; margin: 0 0 10px 0; line-height: 1.4; color: #333;}
         .price { color: var(--primary); font-size: 22px; font-weight: bold; margin-bottom: 20px; }
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
-        select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; outline: none;}
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #555;}
+        select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; background: #fafafa;}
+        
         .qty-control { display: flex; align-items: center; gap: 15px; }
-        .qty-btn { width: 40px; height: 40px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 20px; cursor: pointer; }
+        .qty-btn { width: 45px; height: 45px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 20px; cursor: pointer; }
         input[type="number"] { width: 60px; text-align: center; border: none; font-size: 18px; font-weight: bold; }
-        .btn-add { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        /* 按鈕群組 */
+        .btn-add { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        
+        /* ✨ 新增：LINE 分享按鈕樣式 */
+        .btn-share-line { 
+            width: 100%; 
+            padding: 16px; 
+            background: #06C755; /* LINE 的官方品牌綠色 */
+            color: #fff; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 12px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="index.html" class="back-btn">← 返回首頁</a>
-        <img id="img" src="">
-        <h1 id="name">載入中...</h1>
+        <img id="img" src="" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+        <h1 id="name">商品載入中...</h1>
         <div class="price" id="price">NT$ 0</div>
 
         <div class="form-group" id="spec-group" style="display: none;">
@@ -43,20 +65,24 @@
             </div>
         </div>
 
-        <button class="btn-add" onclick="addToCart()">加入購物車</button>
+        <button class="btn-add" onclick="addToCart()">🛒 加入購物車</button>
+        <!-- ✨ 新增：LINE 分享按鈕 -->
+        <button class="btn-share-line" onclick="shareToLine()">💬 分享給 LINE 好友</button>
     </div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const pName = params.get('name');
-        const pPrice = parseInt(params.get('price'));
-        const pImg = params.get('img');
-        const specsStr = params.get('specs');
+        const pName = params.get('name') || '未知商品';
+        const pPrice = parseInt(params.get('price')) || 0;
+        const pImg = params.get('img') || '';
+        const specsStr = params.get('specs') || '';
 
+        // 渲染畫面
         document.getElementById('name').innerText = pName;
         document.getElementById('price').innerText = `NT$ ${pPrice}`;
-        document.getElementById('img').src = pImg;
+        if(pImg) document.getElementById('img').src = pImg;
 
+        // 處理規格
         if (specsStr) {
             document.getElementById('spec-group').style.display = 'block';
             specsStr.split(/,|，/).forEach(s => {
@@ -75,12 +101,26 @@
             let spec = specsStr ? document.getElementById('spec').value : '';
             let qty = parseInt(document.getElementById('qty').value);
             
-            // 加入購物車陣列
             cart.push({ name: pName, price: pPrice, img: pImg, spec: spec, qty: qty });
             localStorage.setItem('belita_cart', JSON.stringify(cart));
             
-            alert('🛒 已加入購物車！');
-            window.location.href = 'index.html'; // 加完跳回首頁繼續逛
+            alert('🛒 已成功加入購物車！');
+            window.location.href = 'index.html'; 
+        }
+
+        // ✨ 新增：分享到 LINE 的邏輯
+        function shareToLine() {
+            // 1. 取得目前這個商品頁的完整網址
+            const currentUrl = window.location.href;
+            
+            // 2. 組合要傳給朋友的推坑文字
+            const message = `✨ 快來看看這個代購好物：\n【${pName}】只要 NT$ ${pPrice}！\n\n👇 點擊下方連結直接看商品 👇\n${currentUrl}`;
+            
+            // 3. 將文字編碼後，透過 LINE 的官方分享連結打開
+            const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
+            
+            // 4. 跳轉到 LINE (手機上會自動打開 LINE App，電腦會打開 LINE 網頁版/應用程式)
+            window.open(lineUrl, '_blank');
         }
     </script>
 </body>
