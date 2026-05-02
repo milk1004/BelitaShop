@@ -30,7 +30,6 @@
         <div class="form-group">
             <input type="password" id="admin-pwd-input" class="pwd-input" placeholder="輸入數字密碼" inputmode="numeric" pattern="[0-9]*">
         </div>
-        <!-- ✨ 按鈕加上了 id -->
         <button class="btn-submit" id="login-btn" onclick="verifyAdmin()">進入上架系統</button>
     </div>
 
@@ -41,9 +40,25 @@
             <div class="form-group"><label>1. 拍攝照片</label><input type="file" id="imageFile" accept="image/*" required></div>
             <div class="form-group"><label>2. 商品名稱</label><input type="text" id="productName" required></div>
             <div class="form-group"><label>3. 價格 (NTD)</label><input type="number" id="price" inputmode="numeric" required></div>
-            <div class="form-group"><label>4. 分類</label>
-                <select id="category"><option>伴手禮</option><option>零食</option><option>保養品</option><option>生活雜貨</option></select>
+            
+            <!-- 可選擇也可自行輸入的分類區塊 -->
+            <div class="form-group">
+                <label>4. 分類</label>
+                <input type="text" id="category" list="category-options" placeholder="點擊選擇預設，或直接輸入新分類" required>
+                <datalist id="category-options">
+                    <option value="伴手禮"></option>
+                    <option value="零食"></option>
+                    <option value="保養品"></option>
+                    <option value="生活雜貨"></option>
+                </datalist>
             </div>
+
+            <!-- ✨ 新增：規格輸入框 -->
+            <div class="form-group">
+                <label>5. 商品規格 (選填，請用逗號分隔)</label>
+                <input type="text" id="specs" placeholder="例如：紅色, 藍色, 黑色 或 玫瑰味, 檸檬味">
+            </div>
+
             <button type="submit" class="btn-submit" id="submit-btn">上傳並上架</button>
             <div id="status-msg" class="status">圖片與資料處理中...</div>
         </form>
@@ -63,7 +78,7 @@
             adminPanel.style.display = 'block'; 
         }
 
-        // ✨ 升級：即時去 GAS 後台驗證密碼
+        // 即時去 GAS 後台驗證密碼
         async function verifyAdmin() {
             const pwdValue = document.getElementById('admin-pwd-input').value;
             if (!pwdValue) { alert('請輸入密碼！'); return; }
@@ -76,7 +91,7 @@
                 const response = await fetch(scriptURL, { 
                     method: 'POST', 
                     body: JSON.stringify({
-                        action: 'verify_admin', // 呼叫我們剛剛在 GAS 新增的功能
+                        action: 'verify_admin', 
                         adminPassword: pwdValue
                     }) 
                 });
@@ -84,13 +99,11 @@
                 const result = await response.json();
 
                 if (result.result === 'success') {
-                    // 密碼正確才放行
                     adminCode = pwdValue;
                     sessionStorage.setItem('belita_admin_code', adminCode);
                     loginPanel.style.display = 'none';
                     adminPanel.style.display = 'block';
                 } else {
-                    // 密碼錯誤立刻擋下
                     alert('❌ 密碼錯誤，請重新輸入！');
                     document.getElementById('admin-pwd-input').value = '';
                 }
@@ -125,6 +138,7 @@
                         productName: document.getElementById('productName').value,
                         category: document.getElementById('category').value,
                         price: document.getElementById('price').value,
+                        specs: document.getElementById('specs').value, // ✨ 更新：把規格一起打包送出
                         imgUrl: imgData.data.url
                     }) 
                 });

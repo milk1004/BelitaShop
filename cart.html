@@ -32,6 +32,23 @@
         .btn-submit { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .btn-submit:disabled { background: #ccc; }
         .empty-cart { text-align: center; padding: 40px; color: #888; }
+
+        /* ✨ 新增：購物須知警告框樣式 */
+        .notice-box { 
+            background: #fff3e0; 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            font-size: 13px; 
+            color: #d35400; 
+            border-left: 4px solid #e67e22; 
+        }
+        .notice-box ul {
+            margin: 5px 0 0;
+            padding-left: 20px;
+            line-height: 1.6;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +59,9 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
         
+        let finalTotal = 0;
+        let currentSubtotal = 0;
+
         function renderCart() {
             const container = document.getElementById('cart-container');
             let cart = JSON.parse(localStorage.getItem('belita_cart') || '[]');
@@ -89,22 +109,41 @@
                             <label>收件人 (暱稱 / LINE)</label>
                             <input type="text" id="combined-name" readonly required>
                         </div>
+                        
+                        <!-- 取貨方式區塊 -->
                         <div class="form-group">
                             <label>取貨方式 (運費只算一次，後續加單也只算一次)</label>
-                            <select id="delivery" onchange="calcTotal(${subtotal})">
-                                <option value="711" data-fee="38">7-11 賣貨便 (+$38)</option>
-                                <option value="711" data-fee="38">賣貨便(無法匯款，請私訊官方) (+38)</option>
-                                <option value="meet" data-fee="0">門市自取 / 面交 (免運)</option>
+                            <select id="delivery" required onchange="checkDeliveryStatus()" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; background: #fafafa;">
+                                <option value="" disabled selected data-fee="0">請選擇取貨方式</option>
+                                <option value="7-11 賣貨便(+$38)" data-fee="38">7-11 賣貨便(+$38)</option>
+                                <option value="賣貨便(無法匯款，請私訊官方) (+38)" data-fee="38">賣貨便(無法匯款，請私訊官方) (+38)</option>
+                                <option value="門市自取 /面交(免運)" data-fee="0">門市自取 /面交(免運)</option>
                             </select>
-                        </div>
+                        </div>  
+                        
                         <div class="bank-box">
-                            <strong>🏦 匯款資訊 (無法匯款 面交免填)</strong><br>
+                            <strong>🏦 匯款資訊 (無法匯款、面交免填)</strong><br>
                             銀行：822 中國信託<br>帳號：9016-2123-2262<br>戶名：劉OO
                         </div>
-                        <div class="form-group">
-                            <label>匯款後五碼</label>
-                            <input type="text" id="bank5" placeholder="輸入末 5 碼 (面交可留空)" maxlength="5" inputmode="numeric">
+                        
+                        <!-- 匯款後五碼區塊 -->
+                        <div class="form-group" id="bank5-container">
+                            <label>匯款帳號後五碼</label>
+                            <input type="text" id="bank5" placeholder="請輸入匯款帳號後五碼" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; background: #fafafa;">
                         </div>
+                        
+                        <!-- ✨ 新增：購買與連線須知 -->
+                        <div class="notice-box">
+                            <strong>⚠️ 購買與連線須知 (下單即表示同意)</strong>
+                            <ul>
+                                <li>下單需預收 $200 訂金，尾款賣貨便取貨付就可以囉！無法轉帳請私訊我們～</li>
+                                <li>結帳不代表一定有貨，商品以現場實際採買數量為準。</li>
+                                <li>若遇缺貨或斷貨，將另行私訊通知，並針對該商品退款。</li>
+                                <li>國際物流難免產生外盒擠壓碰撞，完美主義者請斟酌下單。</li>
+                                <li>代購服務屬委任契約，除重大瑕疵外，恕不提供退換貨。</li>
+                            </ul>
+                        </div>
+                        
                         <button type="submit" class="btn-submit" id="btn-submit">確認送出訂單</button>
                     </form>
                 </div>`;
@@ -118,11 +157,44 @@
                 alert('⚠️ 請先登入會員'); window.location.href = 'login.html';
             }
 
-            // 初次計算總額
-            calcTotal(subtotal);
+            // 更新商品小計並進行初次計算
+            currentSubtotal = subtotal;
+            calcTotal();
             
             // 綁定送出事件
             document.getElementById('checkout-form').addEventListener('submit', (e) => submitOrder(e, cart));
+        }
+
+        // 判斷狀態並自動更新總額
+        function checkDeliveryStatus() {
+            const deliverySelect = document.getElementById('delivery');
+            const bank5Container = document.getElementById('bank5-container');
+            const bank5Input = document.getElementById('bank5');
+
+            if (deliverySelect.value === '賣貨便(無法匯款，請私訊官方) (+38)') {
+                bank5Container.style.display = 'none'; 
+                bank5Input.value = '無法匯款'; 
+            } else if (deliverySelect.value === '門市自取 /面交(免運)') {
+                bank5Container.style.display = 'none'; 
+                bank5Input.value = '面交'; 
+            } else {
+                bank5Container.style.display = 'block'; 
+                bank5Input.value = ''; 
+            }
+
+            // 切換物流時，重新計算包含運費的總額
+            calcTotal();
+        }
+
+        // 取得 data-fee 計算總額
+        function calcTotal() {
+            const sel = document.getElementById('delivery');
+            const feeAttr = sel.options[sel.selectedIndex].getAttribute('data-fee');
+            const fee = feeAttr ? parseInt(feeAttr) : 0;
+            
+            finalTotal = currentSubtotal + fee;
+            document.getElementById('shipping-fee').innerText = fee;
+            document.getElementById('total').innerText = finalTotal;
         }
 
         function removeItem(index) {
@@ -132,22 +204,11 @@
             renderCart(); // 重新渲染畫面
         }
 
-        let finalTotal = 0;
-        function calcTotal(subtotal) {
-            const sel = document.getElementById('delivery');
-            const fee = parseInt(sel.options[sel.selectedIndex].getAttribute('data-fee'));
-            finalTotal = subtotal + fee;
-            document.getElementById('shipping-fee').innerText = fee;
-            document.getElementById('total').innerText = finalTotal;
-            document.getElementById('bank5').required = (fee > 0); // 面交免填
-        }
-
         async function submitOrder(e, cart) {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
             btn.disabled = true; btn.innerText = '訂單處理中...';
 
-            // 將購物車陣列轉換成 GAS 能夠接收的單一字串
             const itemsString = cart.map(item => `${item.name}${item.spec ? '('+item.spec+')' : ''} x ${item.qty}`).join(' \n');
             const sel = document.getElementById('delivery');
 
@@ -158,13 +219,13 @@
                         name: document.getElementById('combined-name').value,
                         delivery: sel.options[sel.selectedIndex].text,
                         bank5: document.getElementById('bank5').value,
-                        items: itemsString, // 🌟 這裡把所有商品包成一包送出
+                        items: itemsString,
                         totalAmount: finalTotal
                     }) 
                 });
                 const result = await response.json();
                 if(result.result === 'success') {
-                    localStorage.removeItem('belita_cart'); // 結帳成功，清空購物車！
+                    localStorage.removeItem('belita_cart'); 
                     window.location.href = 'success.html';
                 } else { alert('下單失敗'); btn.disabled = false; btn.innerText = '確認送出訂單'; }
             } catch (error) { alert('連線異常'); btn.disabled = false; btn.innerText = '確認送出訂單'; }

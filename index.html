@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Belita 代購 | 首頁</title>
-    <style>
-        :root { --primary-color: #8b7355; --bg-color: #fdfaf7; --text-main: #333; --text-light: #888; }
+    <style> 
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600&display=swap');        :root { --primary-color: #8b7355; --bg-color: #fdfaf7; --text-main: #333; --text-light: #888; }
         * { box-sizing: border-box; font-family: 'PingFang TC', sans-serif; }
         body { margin: 0; background-color: var(--bg-color); color: var(--text-main); }
         
@@ -28,7 +28,15 @@
         .banner-container { padding: 40px 20px; text-align: center; }
         .banner { max-width: 900px; margin: 0 auto; background: #fff; padding: 50px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(139, 115, 85, 0.05); }
         .banner-tag { display: inline-block; background: #f4eee9; color: var(--primary-color); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 15px; }
-        .banner h1 { font-size: 32px; margin: 0 0 15px 0; }
+        .banner h1 { 
+            font-family: 'Noto Serif TC', serif; /* ✨ 換上高質感明體 */
+            font-size: 32px; 
+            font-weight: 600;
+            margin: 0 0 15px 0; 
+            line-height: 1.4; 
+            color: var(--primary-color); 
+            letter-spacing: 4px; /* ✨ 字距拉開，精品氣質馬上出來 */
+        }
         .banner p { color: var(--text-light); margin: 0; }
         
         /* 賣場公告區塊樣式 */
@@ -68,8 +76,8 @@
         <div class="logo-area">
             <img src="logo.png" alt="Belita Logo" class="logo-img" onerror="this.style.display='none'">
             <div class="logo-text-group">
-                <div class="logo-sub">Belita SELECT</div>
-                <div class="logo-main">Belita 代購</div>
+                
+                <div class="logo-main">Belita 賣場</div>
             </div>
         </div>
         
@@ -82,7 +90,6 @@
 
     <div class="banner-container">
         <div class="banner">
-            <div class="banner-tag">Belita SELECT</div>
             <h1>日本/韓國連線代購</h1>
             <p>點擊商品即可加入購物車。目前上架 : <span id="total-count">-</span> 件</p>
             

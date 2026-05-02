@@ -58,11 +58,12 @@
         <h1 id="name">商品載入中...</h1>
         <div class="price" id="price">NT$ 0</div>
 
+        <!-- ✨ 規格選擇區塊 (預設隱藏，有規格時才會靠 JS 顯示) -->
         <div class="form-group" id="spec-group" style="display: none;">
             <label>選擇規格</label>
             <select id="spec"></select>
         </div>
-
+        
         <div class="form-group">
             <label>購買數量</label>
             <div class="qty-control">
@@ -73,7 +74,7 @@
         </div>
 
         <button class="btn-add" onclick="addToCart()">🛒 加入購物車</button>
-        <!-- ✨ 新增：LINE 分享按鈕 -->
+        <!-- ✨ LINE 分享按鈕 -->
         <button class="btn-share-line" onclick="shareToLine()">💬 分享給 LINE 好友</button>
     </div>
 
@@ -115,7 +116,7 @@
             window.location.href = 'index.html'; 
         }
 
-// ✨ 更新：自動生成帶有圖片預覽的分享連結 (iPhone 友善版)
+        // 自動生成帶有圖片預覽的分享連結 (iPhone 友善版)
         function shareToLine() {
             // 抓取目前這個 GitHub 商品頁的真實網址
             const currentUrl = window.location.href;
