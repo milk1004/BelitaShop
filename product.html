@@ -108,9 +108,9 @@
             window.location.href = 'index.html'; 
         }
 
-// ✨ 更新：自動生成帶有圖片預覽的分享連結
+// ✨ 更新：自動生成帶有圖片預覽的分享連結 (iPhone 友善版)
         function shareToLine() {
-            // ⚠️ 這裡填上你的 Google Apps Script 網址
+            // ⚠️ 請確認你的網址前後「一定」要有單引號 ' 或雙引號 " 包住它！
             const scriptURL = 'https://script.google.com/macros/s/AKfycbynMF3m45iQKEsBtIaruJ1XVFq-t2kFUdvMiycw_oVOjFpxxmfrPyTccQ6pxTNz2cuR8g/exec'; 
             
             // 組裝分享給 Google 中轉站的網址
@@ -119,7 +119,9 @@
             const message = `✨ 快來看看這個代購好物：\n【${pName}】只要 NT$ ${pPrice}！\n\n👇 點擊下方連結直接看商品 👇\n${shareUrl}`;
             
             const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
-            window.open(lineUrl, '_blank');
+            
+            // ✨ 改用這行，避免 iPhone 把跳轉當成廣告擋掉
+            window.location.href = lineUrl;
         }
     </script>
 </body>
