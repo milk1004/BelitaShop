@@ -2,22 +2,35 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <!-- 加入 user-scalable=no 並且字體設為 16px，完美防止 iPhone 點擊時亂放大 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Belita | 手機快速上架</title>
     <style>
         :root { --primary: #8b7355; --bg: #fdfaf7; }
-        * { box-sizing: border-box; font-family: 'PingFang TC', sans-serif; }
+        * { box-sizing: border-box; font-family: 'PingFang TC', -apple-system, sans-serif; }
         body { background: var(--bg); padding: 15px; margin: 0; color: #333; }
         .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
         h1 { font-size: 20px; color: var(--primary); text-align: center; margin-bottom: 25px;}
         .form-group { margin-bottom: 20px; }
         label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #666;}
-        input, select { width: 100%; padding: 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 16px; background: #fafafa; outline: none; transition: 0.3s;}
-        input:focus { border-color: var(--primary); background: #fff;}
+        
+        /* ✨ 這裡的 font-size: 16px 是 iPhone 體驗滑順的關鍵 */
+        input, select { 
+            width: 100%; 
+            padding: 14px; 
+            border: 1.5px solid #eee; 
+            border-radius: 10px; 
+            font-size: 16px; 
+            background: #fafafa; 
+            outline: none; 
+            transition: 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--primary); background: #fff;}
+        
         .btn-submit { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-submit:disabled { background: #ccc; }
         .spec-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; background: #fdfaf7; padding: 10px; border-radius: 10px; border: 1px dashed #d1c4b7;}
-        .spec-row input { padding: 10px; font-size: 15px; border: 1px solid #ddd; }
+        .spec-row input { padding: 10px; font-size: 16px; border: 1px solid #ddd; }
         .btn-del-spec { background: #ffebee; color: #d32f2f; border: none; border-radius: 8px; cursor: pointer; padding: 0 15px; font-weight: bold; }
         .btn-add-spec { width: 100%; padding: 14px; background: #fff; color: var(--primary); border: 2px dashed var(--primary); border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; }
     </style>
@@ -35,11 +48,22 @@
             <div class="form-group"><label>1. 拍攝照片</label><input type="file" id="imageFile" accept="image/*" required></div>
             <div class="form-group"><label>2. 商品名稱</label><input type="text" id="productName" required></div>
             <div class="form-group"><label>3. 基本價格 (NTD)</label><input type="number" id="price" inputmode="numeric" required></div>
+            
+            <!-- ✨ 專為 iPhone 優化的下拉選單 -->
             <div class="form-group">
                 <label>4. 分類</label>
-                <input type="text" id="category" list="category-options" placeholder="選擇或輸入新分類" required>
-                <datalist id="category-options"><option value="伴手禮"></option><option value="零食"></option><option value="保養品"></option><option value="生活雜貨"></option></datalist>
+                <select id="category-select" required onchange="checkNewCategory()">
+                    <option value="" disabled selected>👉 請點擊選擇分類</option>
+                    <option value="伴手禮">伴手禮</option>
+                    <option value="零食">零食</option>
+                    <option value="保養品">保養品</option>
+                    <option value="生活雜貨">生活雜貨</option>
+                    <option value="custom">➕ 自行輸入新分類...</option>
+                </select>
+                <!-- 當老闆選了 "自行輸入"，這個格子才會跑出來 -->
+                <input type="text" id="custom-category" placeholder="請輸入您想要的新分類名稱" style="display: none; margin-top: 10px;">
             </div>
+
             <div class="form-group"><label>5. 總庫存 (無規格時適用)</label><input type="number" id="stock" value="10" inputmode="numeric" required></div>
             <div class="form-group">
                 <label>6. 商品規格 (選填)</label>
@@ -71,6 +95,20 @@
             } catch (e) { alert('驗證失敗'); }
         }
 
+        // ✨ 監聽分類選擇，如果是選自訂，就顯示輸入框
+        function checkNewCategory() {
+            const select = document.getElementById('category-select');
+            const customInput = document.getElementById('custom-category');
+            if (select.value === 'custom') {
+                customInput.style.display = 'block';
+                customInput.required = true; 
+                customInput.focus(); // 自動跳出鍵盤
+            } else {
+                customInput.style.display = 'none';
+                customInput.required = false;
+            }
+        }
+
         function addSpecRow() {
             const container = document.getElementById('spec-container');
             const div = document.createElement('div');
@@ -92,6 +130,12 @@
                 if(n) specsArr.push(`${n}:${p ? p : document.getElementById('price').value}:${s ? s : 0}`);
             });
 
+            // ✨ 判斷要傳送哪一個分類的值
+            let finalCategory = document.getElementById('category-select').value;
+            if (finalCategory === 'custom') {
+                finalCategory = document.getElementById('custom-category').value.trim();
+            }
+
             try {
                 const formData = new FormData(); formData.append('image', document.getElementById('imageFile').files[0]);
                 const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
@@ -102,7 +146,7 @@
                     body: JSON.stringify({
                         action: 'add_product', adminPassword: adminCode,
                         productName: document.getElementById('productName').value,
-                        category: document.getElementById('category').value,
+                        category: finalCategory, // ✨ 傳送最終決定的分類
                         price: document.getElementById('price').value,
                         stock: document.getElementById('stock').value,
                         specs: specsArr.join(','), imgUrl: imgData.data.url
