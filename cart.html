@@ -6,7 +6,7 @@
     <title>Belita | 結帳購物車</title>
     <style>
         :root { --primary: #8b7355; --bg: #fdfaf7; }
-        * { box-sizing: border-box; font-family: 'PingFang TC', sans-serif; }
+        * { box-sizing: border-box; font-family: 'PingFang TC', -apple-system, sans-serif; }
         body { margin: 0; background: var(--bg); color: #444; padding: 20px; }
         .container { max-width: 800px; margin: 0 auto; display: grid; gap: 20px; }
         .card { background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 8px 25px rgba(139,115,85,0.05); }
@@ -17,7 +17,7 @@
         .cart-info h4 { margin: 0 0 5px 0; font-size: 15px; color: #333;}
         .cart-info p { margin: 0; color: #888; font-size: 13px; }
         .cart-price { font-weight: bold; color: var(--primary); display: block; margin-top: 5px;}
-        .btn-del { background: #ffebee; color: #d32f2f; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold;}
+        .btn-del { background: #ffebee; color: #d32f2f; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold;}
         .row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 15px; }
         .total-row { font-size: 18px; font-weight: bold; color: #d32f2f; margin-top: 15px; padding-top: 15px; border-top: 2px solid #f4f4f4; }
         .form-group { margin-bottom: 18px; }
@@ -43,7 +43,7 @@
             let cart = JSON.parse(localStorage.getItem('belita_cart') || '[]');
             
             if (cart.length === 0) {
-                container.innerHTML = `<div class="card empty-cart"><h2>🛒 購物車是空的</h2><p>趕快去逛逛吧！</p><button class="btn-submit" onclick="location.href='index.html'" style="margin-top:15px; width:auto; padding:12px 30px;">回首頁逛逛</button></div>`;
+                container.innerHTML = `<div class="card empty-cart"><h2>🛒 購物車是空的</h2><p>趕快去逛逛吧！</p><button type="button" class="btn-submit" onclick="location.href='index.html'" style="margin-top:15px; width:auto; padding:12px 30px;">回首頁逛逛</button></div>`;
                 return;
             }
 
@@ -58,7 +58,8 @@
                             <p>${item.spec ? '款式: '+item.spec : '標準規格'}</p>
                             <span class="cart-price">NT$ ${item.price} x ${item.qty}</span>
                         </div>
-                        <button class="btn-del" onclick="removeItem(${index})">刪除</button>
+                        <!-- ✨ 加上 type="button" 並明確呼叫 window.removeItem -->
+                        <button type="button" class="btn-del" onclick="window.removeItem(${index})">刪除</button>
                     </div>`;
             });
 
@@ -97,8 +98,7 @@
         function checkDeliveryStatus() {
             const sel = document.getElementById('delivery').value;
             const bBox = document.getElementById('bank5-container'); const bInput = document.getElementById('bank5');
-            if (sel.includes('無法匯款')) { bBox.style.display = 'none'; bInput.value = '無法匯款'; } 
-            else if (sel.includes('面交')) { bBox.style.display = 'none'; bInput.value = '面交'; } 
+            if (sel.includes('無法匯款') || sel.includes('面交')) { bBox.style.display = 'none'; bInput.value = sel.includes('面交') ? '面交' : '無法匯款'; } 
             else { bBox.style.display = 'block'; bInput.value = ''; }
             calcTotal();
         }
@@ -110,30 +110,32 @@
             document.getElementById('shipping-fee').innerText = fee; document.getElementById('total').innerText = finalTotal;
         }
 
-async function submitOrder(e, cart) {
+        // ✨ 確保函數暴露到最外層，不會被瀏覽器阻擋
+        window.removeItem = function(index) {
+            let cart = JSON.parse(localStorage.getItem('belita_cart') || '[]'); 
+            cart.splice(index, 1);
+            localStorage.setItem('belita_cart', JSON.stringify(cart)); 
+            renderCart();
+        }
+
+        async function submitOrder(e, cart) {
             e.preventDefault(); const btn = document.getElementById('btn-submit');
-            btn.disabled = true; btn.innerText = '訂單處理中，正在同步庫存...';
-            
-            // 準備資料
+            btn.disabled = true; btn.innerText = '系統排隊處理中，請勿關閉畫面...';
             const itemsString = cart.map(item => `${item.name}${item.spec ? '('+item.spec+')' : ''} x ${item.qty}`).join(' \n');
             const sel = document.getElementById('delivery');
-            
             try {
                 const res = await fetch(scriptURL, { method: 'POST', body: JSON.stringify({
-                    action: "submit_order", // ✨ 告知後端執行扣庫存下單
+                    action: 'checkout', // 加上結帳標記
                     name: document.getElementById('combined-name').value, 
                     delivery: sel.options[sel.selectedIndex].text,
                     bank5: document.getElementById('bank5').value, 
-                    itemsString: itemsString, // 存入明細顯示用
-                    cartArray: cart,          // 傳給後端計算扣除庫存用
-                    totalAmount: finalTotal
+                    items: itemsString, 
+                    totalAmount: finalTotal,
+                    cartData: cart // 傳送購物車陣列供後端扣庫存
                 })});
                 const result = await res.json();
-                if(result.result === 'success') { 
-                    localStorage.removeItem('belita_cart'); 
-                    window.location.href = 'success.html'; 
-                } 
-                else { alert('下單失敗'); btn.disabled = false; btn.innerText = '確認送出訂單'; }
+                if(result.result === 'success') { localStorage.removeItem('belita_cart'); window.location.href = 'success.html'; } 
+                else { alert('下單失敗：' + (result.message || '未知錯誤')); btn.disabled = false; btn.innerText = '確認送出訂單'; }
             } catch (error) { alert('連線異常，請檢查網路'); btn.disabled = false; btn.innerText = '確認送出訂單'; }
         }
         window.onload = renderCart;
